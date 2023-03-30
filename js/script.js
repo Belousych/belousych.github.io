@@ -260,4 +260,8 @@ async function start() {
     console.timeEnd('FirstWay');
 }
 
-start()
+
+
+(function () {
+  start()
+}());

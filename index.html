@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Карта GTRoute (версия 1.2)</title>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=EDGE">   
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <!-- стили карты -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="" />
+
+    <!-- скрипт карты -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+
+
+    <link rel="stylesheet" href="node_modules/leaflet.markercluster/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css">
+    <script src="node_modules/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+    <link rel='stylesheet' href='./css/styles.css'>  
+    
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-area-select@1.0.5/dist/Map.SelectArea.min.js"></script>
+</head>
+
+<body>
+    
+    <div id="map" class="map"></div>
+    
+    <!--нужен для замены на js-код, при загрузке в 1с-->                         
+    <script src='./js/script.js'/>
+
+</body>
+
+</html>

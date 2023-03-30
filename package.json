@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "leaflet-area-select": "^1.0.5",
+    "leaflet.markercluster": "^1.5.3"
+  }
+}

@@ -13,7 +13,7 @@ let mapLayers = new Map(); // массив наших слоев на карте
 let controlScale;
 
 
-
+  
 
 var myLayers = {}
 

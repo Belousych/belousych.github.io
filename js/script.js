@@ -1,24 +1,29 @@
-
-
 let map; //основная переменная с картой
 
 let data_0; // массив настроек
 
 let engines; // массив подложек
 
-
+const markers = L.markerClusterGroup(); //https://github.com/Leaflet/Leaflet.markercluster
 
 let mapLayers = new Map(); // массив наших слоев на карте
 
 let controlScale;
 
+var selectedMarkers = [];
 
-  
-
-var myLayers = {}
+var myLayers = {};
 
 //------------------------------------------------------------------------------------------------------------------------
 //-- Функции
+
+const clearActiveMarkers = () => {
+  selectedMarkers = [];
+  var activeMarkers = document.querySelectorAll(".my-div-icon_active");
+  activeMarkers.forEach(function (item, i, arr) {
+    item.classList.remove("my-div-icon_active");
+  });
+};
 
 function CreatePolyline(options) {
   const polyline = {
@@ -29,7 +34,6 @@ function CreatePolyline(options) {
 
   return polyline;
 }
-
 
 // рисуем кривую по геометрии в формате geoJSON
 // на основе функции "addPolylines"
@@ -44,10 +48,8 @@ function RouteBuild(data_in, parseNeed = true) {
   const route = data_in.route;
   const deliveryPoints = data_in.deliveryPoints;
   const myRoute = [];
-  const markers = L.markerClusterGroup();  //https://github.com/Leaflet/Leaflet.markercluster
 
-
-  let options = { color: 'red' };
+  let options = { color: "red" };
 
   //alert(1);
 
@@ -82,43 +84,33 @@ function RouteBuild(data_in, parseNeed = true) {
 
     let markerOptions = {
       icon: myIcon,
-      
+
       title: item.textHover,
-      alt: item.id,
+      id: item.id,
     };
 
-    
+    let marker = L.marker(coord, markerOptions).bindPopup(item.textPopup, { offset: [0, -20] });
 
-    let marker = L.marker(coord, markerOptions).bindPopup(item.textPopup);
-
-    
-   
     markers.addLayer(marker);
   });
-  markers.addLayer(polyline)
+  markers.addLayer(polyline);
 
-  markers.on('click', function (a) {
-    console.log(a);
-
-    // $(marker._icon).addClass('selectedMarker');
+  markers.on("click", function (e) {
+    
+    // e.sourceTarget._icon.classList.add('.my-div-icon_active')
+    clearActiveMarkers();
+    L.DomUtil.addClass(e.sourceTarget._icon, "my-div-icon_active");
+    selectedMarkers.push(e.sourceTarget?.options?.id);
   });
 
- 
+  myLayers[route.id] = markers;
 
-  
-
-  myLayers[route.id] = markers
-
-  myLayers[route.id].addTo(map)
-
-  
+  myLayers[route.id].addTo(map);
 }
 
 //---------------------------------------------------------------------------
 
-
 //---------------------------------------------------------------------------
-
 
 function removeLayer(layer, parseNeed = true) {
   if (parseNeed) {
@@ -134,10 +126,11 @@ function removeLayer(layer, parseNeed = true) {
 
   //alert("removed: " + layer);
 }
-var myIcon = L.divIcon({className: 'my-div-icon', iconSize: 36, html: '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="#3276c3" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg>'})
-
-
-
+var myIcon = L.divIcon({
+  className: "my-div-icon",
+  iconSize: 50,
+  html: '<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="#3276c3" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>',
+});
 
 //------------------------------------------------------------------------------------------
 
@@ -148,8 +141,6 @@ function init(data) {
     return -1;
   }
 
-
-  
   data_0 = JSON.parse(data);
 
   storageIcon = new L.Icon({
@@ -187,6 +178,9 @@ function ResetMap() {
   map.eachLayer((layer) => map.removeLayer(layer));
 }
 
+
+
+
 function createMap() {
   map = L.map("map", {
     boxZoom: false, //-- отключить выделение кнопкой SHIFT
@@ -195,19 +189,28 @@ function createMap() {
 
   //-- В выделенной области перебираем маркеры и кладем их в массив markers
   map.on("areaselected", (e) => {
-    markers = [];
+   
+    console.log(e);
+    console.log(e.bounds.toBBoxString());
+
+
+    console.log(markers)
 
     L.Util.requestAnimFrame(function () {
       let props = [];
 
       map.eachLayer(function (pointLayer) {
+
+        console.log(pointLayer, pointLayer)
         if (pointLayer instanceof L.Marker) {
           if (e.bounds.contains(pointLayer.getLatLng())) {
-            for (let key in pointLayer) {
-              props.push("key: " + key + " -> " + pointLayer[key]);
-            }
 
-            markers.push(pointLayer._popup._content);
+            console.log('pointLayer', pointLayer)
+            // for (let key in pointLayer) {
+            //   props.push("key: " + key + " -> " + pointLayer[key]);
+            // }
+
+            // markers.push(pointLayer._popup._content);
 
             //alert(pointLayer._popup._alt);
             //markers.push(props);
@@ -217,51 +220,47 @@ function createMap() {
     });
   });
 
+  map.on("click", (e) => {
+    clearActiveMarkers();
+
+    console.log(markers)
+  });
+
   map.selectArea.setControlKey(true);
 }
 
 //-- функция служит для возврата с Карты в 1с массив выделенных координат
 function returnMarkers() {
-  if (markers.length != 0) {
-    return JSON.stringify(markers);
+  if (selectedMarkers.length != 0) {
+    return JSON.stringify(selectedMarkers);
   }
 }
 
 function clearMarkers() {
-  markers = [];
+  selectedMarkers = [];
 }
-
-
-
-
 
 // --------------------
 
-async function loadJson(url){
-    const res = await fetch(url);
-    const json = await res.json();
-    return json
+async function loadJson(url) {
+  const res = await fetch(url);
+  const json = await res.json();
+  return json;
 }
-
-
-
-
 
 async function start() {
-    const dataInit = await loadJson('./data/1/data.json');    
-    const data_in = await loadJson('./data/2/data.json');    
+  const dataInit = await loadJson("./data/1/data.json");
+  const data_in = await loadJson("./data/2/data.json");
 
-    console.log(data_in)
-    createMap();
-    init(JSON.stringify(dataInit));
-    initMap();
-    console.time('FirstWay');
-    RouteBuild(JSON.stringify(data_in))
-    console.timeEnd('FirstWay');
+  console.log(data_in);
+  createMap();
+  init(JSON.stringify(dataInit));
+  initMap();
+  console.time("FirstWay");
+  RouteBuild(JSON.stringify(data_in));
+  console.timeEnd("FirstWay");
 }
 
-
-
 (function () {
-  start()
-}());
+  start();
+})();

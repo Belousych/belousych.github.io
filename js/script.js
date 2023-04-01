@@ -5,7 +5,8 @@ let data_0; // массив настроек
 let engines; // массив подложек
 
 const markers = L.markerClusterGroup(); //https://github.com/Leaflet/Leaflet.markercluster
-
+const circleList = []
+let markerList = [];
 let mapLayers = new Map(); // массив наших слоев на карте
 
 let controlScale;
@@ -18,11 +19,11 @@ var myLayers = {};
 //-- Функции
 
 const clearActiveMarkers = () => {
+  markerList.forEach((marker, index) => {
+    setMarkerUnActive(marker)
+  })
   selectedMarkers = [];
-  var activeMarkers = document.querySelectorAll(".my-div-icon_active");
-  activeMarkers.forEach(function (item, i, arr) {
-    item.classList.remove("my-div-icon_active");
-  });
+  
 };
 
 function CreatePolyline(options) {
@@ -34,6 +35,34 @@ function CreatePolyline(options) {
 
   return polyline;
 }
+
+const setMarkerActive = (marker) => {
+  try {
+    L.DomUtil.addClass(marker._icon, "my-div-icon_active");  
+  } catch (error) {
+    
+  }
+  
+  selectedMarkers.push(marker?.options?.id);
+  setTimeout(() => {
+    marker.setIcon(myIconActive);
+  }, 400);
+};
+
+const setMarkerUnActive = (marker) => {
+  try {
+    L.DomUtil.removeClass(marker._icon, "my-div-icon_active");  
+  } catch (error) {
+    
+  }
+  
+  selectedMarkers = selectedMarkers.filter(item => item !== marker?.options?.id);
+  setTimeout(() => {
+    marker.setIcon(myIcon);
+  }, 400);
+};
+
+
 
 // рисуем кривую по геометрии в формате geoJSON
 // на основе функции "addPolylines"
@@ -84,28 +113,59 @@ function RouteBuild(data_in, parseNeed = true) {
 
     let markerOptions = {
       icon: myIcon,
-
       title: item.textHover,
       id: item.id,
+      // pane: "markers"
     };
 
-    let marker = L.marker(coord, markerOptions).bindPopup(item.textPopup, { offset: [0, -20] });
+    let marker = L.marker(coord, markerOptions).bindPopup(item.textPopup, {
+      offset: [0, -20],
+    });
 
+    var circle = L.marker(coord, {
+      ...markerOptions,
+      icon: divIconGhost,
+      opacity: 0.25,
+      pane: "markers"
+  })
+
+  circleList.push(circle)
+
+    markerList.push(marker);
     markers.addLayer(marker);
   });
-  markers.addLayer(polyline);
+  // markers.addLayer(polyline);
 
   markers.on("click", function (e) {
-    
-    // e.sourceTarget._icon.classList.add('.my-div-icon_active')
-    clearActiveMarkers();
-    L.DomUtil.addClass(e.sourceTarget._icon, "my-div-icon_active");
-    selectedMarkers.push(e.sourceTarget?.options?.id);
+    setMarkerActive(e.sourceTarget);
+  
   });
 
-  myLayers[route.id] = markers;
+  
 
-  myLayers[route.id].addTo(map);
+
+  
+  
+  var markerCircle = L.layerGroup(circleList);
+  // markerCircle.addLayer(polyline);
+
+  myLayers[route.id] = {
+    "path": polyline,
+    "clusters": markers,
+    "markers": markerCircle
+  };
+  
+  myLayers[route.id].markers.addTo(map);
+  myLayers[route.id].path.addTo(map);
+  myLayers[route.id].clusters.addTo(map);
+
+
+  // var layerControl = L.control.layers({
+  //   "clusters": myLayers[route.id].clusters,
+  //   "markers": myLayers[route.id].markers
+  // }).addTo(map);
+
+  
 }
 
 //---------------------------------------------------------------------------
@@ -128,6 +188,19 @@ function removeLayer(layer, parseNeed = true) {
 }
 var myIcon = L.divIcon({
   className: "my-div-icon",
+  iconSize: 50,
+  html: '<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="#3276c3" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>',
+});
+
+
+var divIconGhost = L.divIcon({
+  className: "my-div-icon",
+  iconSize: 25,
+  html: '<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="#3276c3" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>',
+});
+
+var myIconActive = L.divIcon({
+  className: "my-div-icon my-div-icon_active",
   iconSize: 50,
   html: '<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="#3276c3" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>',
 });
@@ -166,6 +239,8 @@ function initMap(zoom = 4, showMarker = false) {
     imperial: false,
   });
 
+  
+
   //controlScale.addTo(map);
 
   if (showMarker) {
@@ -178,55 +253,54 @@ function ResetMap() {
   map.eachLayer((layer) => map.removeLayer(layer));
 }
 
-
-
-
 function createMap() {
   map = L.map("map", {
     boxZoom: false, //-- отключить выделение кнопкой SHIFT
     selectArea: true, //-- запускаем библиотеку выбор маркетор
+    
   });
 
   //-- В выделенной области перебираем маркеры и кладем их в массив markers
   map.on("areaselected", (e) => {
-   
     console.log(e);
     console.log(e.bounds.toBBoxString());
 
-
-    console.log(markers)
-
     L.Util.requestAnimFrame(function () {
-      let props = [];
-
-      map.eachLayer(function (pointLayer) {
-
-        console.log(pointLayer, pointLayer)
-        if (pointLayer instanceof L.Marker) {
-          if (e.bounds.contains(pointLayer.getLatLng())) {
-
-            console.log('pointLayer', pointLayer)
-            // for (let key in pointLayer) {
-            //   props.push("key: " + key + " -> " + pointLayer[key]);
-            // }
-
-            // markers.push(pointLayer._popup._content);
-
-            //alert(pointLayer._popup._alt);
-            //markers.push(props);
-          }
+      markerList.forEach(function (marker, index, array) {
+        if (e.bounds.contains(marker.getLatLng())) {
+          setMarkerActive(marker);
         }
       });
+
+      // map.eachLayer(function (pointLayer) {
+      //   console.log(pointLayer, pointLayer);
+      //   if (pointLayer instanceof L.Marker) {
+      //     if (e.bounds.contains(pointLayer.getLatLng())) {
+      //       console.log("pointLayer", pointLayer);
+      //       // for (let key in pointLayer) {
+      //       //   props.push("key: " + key + " -> " + pointLayer[key]);
+      //       // }
+
+      //       // markers.push(pointLayer._popup._content);
+
+      //       //alert(pointLayer._popup._alt);
+      //       //markers.push(props);
+      //     }
+      //   }
+      // });
     });
   });
 
   map.on("click", (e) => {
-    clearActiveMarkers();
-
-    console.log(markers)
+    // clearActiveMarkers();
+    // console.log(markers);
   });
 
   map.selectArea.setControlKey(true);
+
+
+  map.createPane('markers');
+  map.getPane('markers').style.zIndex = 401;
 }
 
 //-- функция служит для возврата с Карты в 1с массив выделенных координат

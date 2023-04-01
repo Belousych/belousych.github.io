@@ -165,7 +165,7 @@ function RouteBuild(data_in, parseNeed = true) {
   //   "markers": myLayers[route.id].markers
   // }).addTo(map);
 
-  
+  myLayers[route.id].addTo(map);
 }
 
 //---------------------------------------------------------------------------
@@ -253,6 +253,9 @@ function ResetMap() {
   map.eachLayer((layer) => map.removeLayer(layer));
 }
 
+
+
+
 function createMap() {
   map = L.map("map", {
     boxZoom: false, //-- отключить выделение кнопкой SHIFT
@@ -272,22 +275,7 @@ function createMap() {
         }
       });
 
-      // map.eachLayer(function (pointLayer) {
-      //   console.log(pointLayer, pointLayer);
-      //   if (pointLayer instanceof L.Marker) {
-      //     if (e.bounds.contains(pointLayer.getLatLng())) {
-      //       console.log("pointLayer", pointLayer);
-      //       // for (let key in pointLayer) {
-      //       //   props.push("key: " + key + " -> " + pointLayer[key]);
-      //       // }
-
-      //       // markers.push(pointLayer._popup._content);
-
-      //       //alert(pointLayer._popup._alt);
-      //       //markers.push(props);
-      //     }
-      //   }
-      // });
+     
     });
   });
 

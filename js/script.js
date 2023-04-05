@@ -122,7 +122,7 @@ function RouteBuild(data_in, parseNeed = true) {
       offset: [0, -20],
     });
 
-    var circle = L.marker(coord, {
+    var circle = L.circleMarker(coord, {
       ...markerOptions,
       icon: divIconGhost,
       opacity: 0.25,
@@ -137,7 +137,15 @@ function RouteBuild(data_in, parseNeed = true) {
   // markers.addLayer(polyline);
 
   markers.on("click", function (e) {
-    setMarkerActive(e.sourceTarget);
+    const marker = e.sourceTarget
+    // console.log(setMarkerActive)
+    if (selectedMarkers.includes(marker?.options?.id)) {
+      setMarkerUnActive(marker);
+      marker.closePopup()
+    } else {
+      setMarkerActive(marker);
+    }
+    
   
   });
 

@@ -63,6 +63,15 @@ const setMarkerUnActive = (marker) => {
 };
 
 
+function addMarker(data_in, icon, comment ) {
+  if (icon === undefined) {
+    icon = myIcon
+  }
+
+ 
+
+  L.marker(data_in, { icon: icon }).addTo(map).bindPopup(comment);
+}
 
 // рисуем кривую по геометрии в формате geoJSON
 // на основе функции "addPolylines"
@@ -154,18 +163,20 @@ function RouteBuild(data_in, parseNeed = true) {
 
   
   
-  var markerCircle = L.layerGroup(circleList);
+  // var markerCircle = L.layerGroup(circleList);
   // markerCircle.addLayer(polyline);
 
-  myLayers[route.id] = {
-    "path": polyline,
-    "clusters": markers,
-    "markers": markerCircle
-  };
+  // myLayers[route.id] = {
+  //   "path": polyline,
+  //   "clusters": markers,
+  //   "markers": markerCircle
+  // };
+
+  myLayers[route.id] =  L.layerGroup([ polyline, markers, ...circleList ])
   
-  myLayers[route.id].markers.addTo(map);
-  myLayers[route.id].path.addTo(map);
-  myLayers[route.id].clusters.addTo(map);
+  // myLayers[route.id].markers.addTo(map);
+  // myLayers[route.id].path.addTo(map);
+  // myLayers[route.id].clusters.addTo(map);
 
 
   // var layerControl = L.control.layers({
@@ -180,20 +191,7 @@ function RouteBuild(data_in, parseNeed = true) {
 
 //---------------------------------------------------------------------------
 
-function removeLayer(layer, parseNeed = true) {
-  if (parseNeed) {
-    layer = JSON.parse(layer).layer;
-  }
 
-  if (mapLayers.has(layer)) {
-    map.removeLayer(mapLayers.get(layer));
-
-    mapLayers.delete(layer);
-  }
-  //} else { alert("key: " + layer + " not found") };
-
-  //alert("removed: " + layer);
-}
 var myIcon = L.divIcon({
   className: "my-div-icon",
   iconSize: 50,
@@ -215,26 +213,26 @@ var myIconActive = L.divIcon({
 
 //------------------------------------------------------------------------------------------
 
-function init(data) {
-  if (data == undefined) {
-    alert("No data in");
+// function init(data) {
+//   if (data == undefined) {
+//     alert("No data in");
 
-    return -1;
-  }
+//     return -1;
+//   }
 
-  data_0 = JSON.parse(data);
+//   data_0 = JSON.parse(data);
 
-  storageIcon = new L.Icon({
-    iconUrl: data_0.iconUrl,
-    iconSize: [51, 51],
-    iconAnchor: [12, 51],
-    popupAnchor: [1, -34],
-  });
+//   storageIcon = new L.Icon({
+//     iconUrl: data_0.iconUrl,
+//     iconSize: [51, 51],
+//     iconAnchor: [12, 51],
+//     popupAnchor: [1, -34],
+//   });
 
-  return 1;
-}
+//   return 1;
+// }
 
-function initMap(zoom = 4, showMarker = false) {
+function initMap(zoom = 4, showMarker = true) {
   mapCenter = [data_0.lat, data_0.lng];
 
   map.setView(mapCenter, zoom);
@@ -252,7 +250,7 @@ function initMap(zoom = 4, showMarker = false) {
   //controlScale.addTo(map);
 
   if (showMarker) {
-    addMarker(mapCenter, storageIcon, data_0.comment);
+    addMarker(mapCenter, myIcon, data_0.comment);
   }
 }
 
@@ -322,9 +320,10 @@ async function start() {
   const dataInit = await loadJson("./data/1/data.json");
   const data_in = await loadJson("./data/2/data.json");
 
-  console.log(data_in);
+  data_0 = dataInit
+  
   createMap();
-  init(JSON.stringify(dataInit));
+  
   initMap();
   console.time("FirstWay");
   RouteBuild(JSON.stringify(data_in));

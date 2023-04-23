@@ -323,7 +323,15 @@ function createMap() {
 
   map.selectArea.setControlKey(true);
 
-  const areaSelection = new window.leafletAreaSelection.DrawAreaSelection();
+  const areaSelection = new window.leafletAreaSelection.DrawAreaSelection({
+    onPolygonReady: (polygon) => {
+      // const preview = document.getElementById('polygon');
+      // preview.textContent = JSON.stringify(polygon.toGeoJSON(3), undefined, 2);
+      // preview.scrollTop = preview.scrollHeight;
+
+      console.log({ polygon: polygon.toGeoJSON() })
+    },
+  });
 
   map.addControl(areaSelection);
   

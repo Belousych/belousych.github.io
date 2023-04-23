@@ -276,6 +276,8 @@ function initMap(zoom = 4, showMarker = true) {
 
   // controlScale.addTo(map);
 
+  
+
   if (showMarker) {
     addMarker(mapCenter, myIcon, data_0.comment);
   }
@@ -321,6 +323,12 @@ function createMap() {
 
   map.selectArea.setControlKey(true);
 
+  const areaSelection = new window.leafletAreaSelection.DrawAreaSelection();
+
+  map.addControl(areaSelection);
+  
+
+
 
   map.createPane('markers');
   map.getPane('markers').style.zIndex = 401;
@@ -357,7 +365,7 @@ async function start() {
   createMap();
   initMap();
 
-
+  
   google.addTo(map)
     
 

@@ -15,6 +15,34 @@ var selectedMarkers = [];
 
 var myLayers = {};
 
+var mapTilesUrl = {
+  "google": "http://{s}.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}",
+  "yandex": "",
+  "openstreet": "https://tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}"
+}
+
+
+var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    
+    attribution: '© OpenStreetMap'
+});
+
+var google = L.tileLayer('http://{s}.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}', {
+    subdomains:['mt0'],
+    
+    attribution: '© Google maps'
+});
+
+
+
+
+var baseMaps = {
+  "OpenStreetMap": osm,
+  "Google maps": google,
+  
+};
+
+
 //------------------------------------------------------------------------------------------------------------------------
 //-- Функции
 
@@ -179,10 +207,9 @@ function RouteBuild(data_in, parseNeed = true) {
   // myLayers[route.id].clusters.addTo(map);
 
 
-  // var layerControl = L.control.layers({
-  //   "clusters": myLayers[route.id].clusters,
-  //   "markers": myLayers[route.id].markers
-  // }).addTo(map);
+  var layerControl = L.control.layers(baseMaps, {
+    [route.id]: myLayers[route.id],
+  }).addTo(map);
 
   myLayers[route.id].addTo(map);
 }
@@ -237,17 +264,17 @@ function initMap(zoom = 4, showMarker = true) {
 
   map.setView(mapCenter, zoom);
 
-  L.tileLayer(data_0.map).addTo(map);
+  
 
-  controlScale = L.control.scale({
-    position: "topright",
-    metric: true,
-    imperial: false,
-  });
+  // controlScale = L.control.scale({
+  //   position: "topright",
+  //   metric: true,
+  //   imperial: false,
+  // });
 
   
 
-  //controlScale.addTo(map);
+  // controlScale.addTo(map);
 
   if (showMarker) {
     addMarker(mapCenter, myIcon, data_0.comment);
@@ -268,6 +295,8 @@ function createMap() {
     selectArea: true, //-- запускаем библиотеку выбор маркетор
     
   });
+
+  map._layersMaxZoom = 19;
 
   //-- В выделенной области перебираем маркеры и кладем их в массив markers
   map.on("areaselected", (e) => {
@@ -320,11 +349,18 @@ async function start() {
   const dataInit = await loadJson("./data/1/data.json");
   const data_in = await loadJson("./data/2/data.json");
 
+  
+
+
   data_0 = dataInit
   
   createMap();
-  
   initMap();
+
+
+  google.addTo(map)
+    
+
   console.time("FirstWay");
   RouteBuild(JSON.stringify(data_in));
   console.timeEnd("FirstWay");

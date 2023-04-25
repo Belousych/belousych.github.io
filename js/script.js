@@ -121,9 +121,11 @@ function RouteBuild(data_in, parseNeed = true) {
   const deliveryPoints = data_in.deliveryPoints;
   const myRoute = [];
 
-  let options = { color: "red" };
+  let options = { color: route.color || "red" };
 
   //alert(1);
+
+  
 
   let polylinePoints = [];
   let arCoordinates = route.geometry;
@@ -161,7 +163,15 @@ function RouteBuild(data_in, parseNeed = true) {
       // pane: "markers"
     };
 
-    let marker = L.marker(coord, markerOptions).bindPopup(item.textPopup, {
+    let marker = L.marker(coord, markerOptions).bindPopup(`
+      <div><b>Контрагент:</b>${item.textPopup.partner}</div>
+      <div><b>Вес:</b>${item.textPopup.weight}</div>
+      <div><b>Объем:</b>${item.textPopup.volume}</div>
+      <div><b>Адрес:</b>${item.textPopup.address}</div>
+      <div><b>Интервал доставки:</b>${item.textPopup.date}</div>
+      <div><b>Комментарий:</b>${item.textPopup.comment}</div>
+      
+      `, {
       offset: [0, -20],
     });
 
@@ -197,20 +207,12 @@ function RouteBuild(data_in, parseNeed = true) {
 
   
   
-  // var markerCircle = L.layerGroup(circleList);
-  // markerCircle.addLayer(polyline);
 
-  // myLayers[route.id] = {
-  //   "path": polyline,
-  //   "clusters": markers,
-  //   "markers": markerCircle
-  // };
 
   myLayers[route.id] =  L.layerGroup([ polyline, markers, ...circleList ])
   
-  // myLayers[route.id].markers.addTo(map);
-  // myLayers[route.id].path.addTo(map);
-  // myLayers[route.id].clusters.addTo(map);
+
+
 
 
   var layerControl = L.control.layers(baseMaps, {
@@ -258,9 +260,17 @@ function initMap(zoom = 4, showMarker = true) {
 
   map.setView(mapCenter, zoom);
 
-  
+  engines = data_0.engines
 
- 
+  console.log('engines', engines)
+
+ if (engines && engines.length > 0) {
+  baseMaps = {}
+  for (let index = 0; index < engines.length; index++) {
+    const element = engines[index];
+    baseMaps[element?.name] = L.tileLayer(element.url)
+  }
+ }
 
   
 
@@ -358,7 +368,7 @@ async function loadJson(url) {
 
 async function start() {
   const dataInit = await loadJson("./data/1/data.json");
-  const data_in = await loadJson("./data/2/data.json");
+  const data_in = await loadJson("./data/next/1.json");
 
   
 

@@ -253,25 +253,6 @@ var myIconStock = L.icon({
 
 //------------------------------------------------------------------------------------------
 
-// function init(data) {
-//   if (data == undefined) {
-//     alert("No data in");
-
-//     return -1;
-//   }
-
-//   data_0 = JSON.parse(data);
-
-//   storageIcon = new L.Icon({
-//     iconUrl: data_0.iconUrl,
-//     iconSize: [51, 51],
-//     iconAnchor: [12, 51],
-//     popupAnchor: [1, -34],
-//   });
-
-//   return 1;
-// }
-
 function initMap(zoom = 4, showMarker = true) {
   mapCenter = [data_0.lat, data_0.lng];
 
@@ -279,15 +260,7 @@ function initMap(zoom = 4, showMarker = true) {
 
   
 
-  // controlScale = L.control.scale({
-  //   position: "topright",
-  //   metric: true,
-  //   imperial: false,
-  // });
-
-  
-
-  // controlScale.addTo(map);
+ 
 
   
 
@@ -338,11 +311,20 @@ function createMap() {
 
   const areaSelection = new window.leafletAreaSelection.DrawAreaSelection({
     onPolygonReady: (polygon) => {
-      // const preview = document.getElementById('polygon');
-      // preview.textContent = JSON.stringify(polygon.toGeoJSON(3), undefined, 2);
-      // preview.scrollTop = preview.scrollHeight;
 
-      console.log({ polygon: polygon.toGeoJSON() })
+      
+
+
+
+      L.Util.requestAnimFrame(function () {
+        markerList.forEach(function (marker, index, array) {
+          if (polygon.getBounds().contains(marker.getLatLng())) {
+            setMarkerActive(marker);
+          }
+        });
+  
+       
+      });
     },
   });
 

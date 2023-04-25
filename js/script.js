@@ -71,7 +71,7 @@ const setMarkerActive = (marker) => {
     
   }
   
-  selectedMarkers.push(marker?.options?.id);
+  selectedMarkers.push(marker.options.id);
   setTimeout(() => {
     marker.setIcon(myIconActive);
   }, 400);
@@ -84,7 +84,7 @@ const setMarkerUnActive = (marker) => {
     
   }
   
-  selectedMarkers = selectedMarkers.filter(item => item !== marker?.options?.id);
+  selectedMarkers = selectedMarkers.filter(item => item !== marker.options.id);
   setTimeout(() => {
     marker.setIcon(myIcon);
   }, 400);
@@ -99,6 +99,12 @@ function addMarker(data_in, icon, comment ) {
  
 
   L.marker(data_in, { icon: icon }).addTo(map).bindPopup(comment);
+}
+
+
+
+function cleanLayersGroup(id) { // удалить все слои пути
+  myLayers[id].clearLayers()
 }
 
 // рисуем кривую по геометрии в формате geoJSON
@@ -176,7 +182,7 @@ function RouteBuild(data_in, parseNeed = true) {
   markers.on("click", function (e) {
     const marker = e.sourceTarget
     // console.log(setMarkerActive)
-    if (selectedMarkers.includes(marker?.options?.id)) {
+    if (selectedMarkers.includes(marker.options.id)) {
       setMarkerUnActive(marker);
       marker.closePopup()
     } else {

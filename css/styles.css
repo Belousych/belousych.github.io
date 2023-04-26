@@ -1,0 +1,58 @@
+#map {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+
+
+
+.my-div-icon_active .my-div-icon_inner {
+    transition: all 0.3s;
+    transform-origin: bottom center;
+    scale: 1.5;
+}
+
+.my-div-icon_active .text {
+    transition: all 0.3s;
+    transform-origin: bottom center;
+    scale: 1.5;
+}
+
+
+/* .leaflet-popup.leaflet-zoom-animated {
+    bottom: 26px;
+} */
+
+.my-div-icon svg path {
+    fill: var(--path-color)
+}
+
+.my-div-icon_active svg path{
+    fill: red;
+    transition: all 0.5s;
+}
+
+.my-div-icon_inner {
+    position: relative;
+}
+
+.my-div-icon_inner:after {
+    content: '1';
+    font-size: 13px;
+    color: black;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 10px;
+    text-align: center;
+}
+
+
+
+.leaflet-control-attribution.leaflet-control a{
+    display: none;
+}
+
+

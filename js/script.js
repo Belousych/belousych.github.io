@@ -396,7 +396,7 @@ async function start() {
 })();
 
 
-function setCenter(data2) {
+function setMarkerCenter(data2) {
   if (!myLayers[data2.route_id]) {
     alert(`маршрут ${data2.route_id} не отображен на карте `)
   }

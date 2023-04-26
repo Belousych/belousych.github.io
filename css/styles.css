@@ -25,9 +25,9 @@
     bottom: 26px;
 } */
 
-.my-div-icon svg path {
+/* .my-div-icon svg path {
     fill: var(--path-color)
-}
+} */
 
 .my-div-icon_active svg path{
     fill: red;

@@ -122,11 +122,25 @@ function RouteBuild(data_in, parseNeed = true) {
   const myRoute = [];
 
 
-  document.documentElement.style.setProperty('--path-color', route.color || "red");
+  const color = route.color || "red"
 
-  let options = { color: route.color || "red" };
+  let options = { color: color };
 
   //alert(1);
+
+
+  var myIcon = L.divIcon({
+    className: "my-div-icon",
+    iconSize: 50,
+    html: `<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+  });
+  
+  
+  var divIconGhost = L.divIcon({
+    className: "my-div-icon",
+    iconSize: 25,
+    html: `<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+  });
 
   
 
@@ -159,6 +173,7 @@ function RouteBuild(data_in, parseNeed = true) {
     const coord = [];
     coord.push(item.ltd, item.lng);
 
+    myIcon.className = `my-div-icon my-div-icon_${route.id}`
     let markerOptions = {
       icon: myIcon,
       title: item.textHover,
@@ -178,8 +193,12 @@ function RouteBuild(data_in, parseNeed = true) {
       offset: [0, -20],
     });
 
+
+    
+    
     var circle = L.circleMarker(coord, {
       ...markerOptions,
+      color: color,
       icon: divIconGhost,
       opacity: 0.25,
       pane: "markers"
@@ -230,18 +249,18 @@ function RouteBuild(data_in, parseNeed = true) {
 //---------------------------------------------------------------------------
 
 
-var myIcon = L.divIcon({
-  className: "my-div-icon",
-  iconSize: 50,
-  html: '<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="#3276c3" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>',
-});
+// var myIcon = L.divIcon({
+//   className: "my-div-icon",
+//   iconSize: 50,
+//   html: '<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="#3276c3" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>',
+// });
 
 
-var divIconGhost = L.divIcon({
-  className: "my-div-icon",
-  iconSize: 25,
-  html: '<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="#3276c3" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>',
-});
+// var divIconGhost = L.divIcon({
+//   className: "my-div-icon",
+//   iconSize: 25,
+//   html: '<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="#3276c3" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>',
+// });
 
 var myIconActive = L.divIcon({
   className: "my-div-icon my-div-icon_active",

@@ -404,7 +404,7 @@ function setMarkerCenter(data2) {
     
     if (marker.options.id === data2.id) {
 
-      console.log(marker)
+      
       setTimeout(() => {
         marker.openPopup();
       }, 500);

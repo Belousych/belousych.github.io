@@ -182,13 +182,12 @@ function RouteBuild(data_in, parseNeed = true) {
     };
 
     let marker = L.marker(coord, markerOptions).bindPopup(`
-      <div><b>Контрагент:</b>${item.textPopup.partner}</div>
-      <div><b>Вес:</b>${item.textPopup.weight}</div>
-      <div><b>Объем:</b>${item.textPopup.volume}</div>
-      <div><b>Адрес:</b>${item.textPopup.address}</div>
-      <div><b>Интервал доставки:</b>${item.textPopup.date}</div>
-      <div><b>Комментарий:</b>${item.textPopup.comment}</div>
-      
+      ${Boolean(item.textPopup.partner) ? `<div><b>Контрагент:</b>${item.textPopup.partner}</div>` : ''}
+      ${Boolean(item.textPopup.weight) ? `<div><b>Вес:</b>${item.textPopup.weight}</div>` : ''}
+      ${Boolean(item.textPopup.volume) ? `<div><b>Объем:</b>${item.textPopup.volume}</div>` : ''}
+      ${Boolean(item.textPopup.address) ? `<div><b>Адрес:</b>${item.textPopup.address}</div>` : ''}
+      ${Boolean(item.textPopup.date) ? `<div><b>Интервал доставки:</b>${item.textPopup.date}</div>` : ''}
+      ${Boolean(item.textPopup.comment) ? `<div><b>Комментарий:</b>${item.textPopup.comment}</div>` : ''}
       `, {
       offset: [0, -20],
     });

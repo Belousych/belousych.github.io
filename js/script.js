@@ -5,55 +5,40 @@ let data_0; // массив настроек
 let engines; // массив подложек
 
 const markers = L.markerClusterGroup(); //https://github.com/Leaflet/Leaflet.markercluster
-const circleList = []
+const circleList = [];
 let markerList = [];
-let mapLayers = new Map(); // массив наших слоев на карте
-
-let controlScale;
 
 var selectedMarkers = [];
 
 var myLayers = {};
 
+var layerControl;
 
-
-var mapTilesUrl = {
-  "google": "http://{s}.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}",
-  "yandex": "",
-  "openstreet": "https://tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}"
-}
-
-
-var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    
-    attribution: '© OpenStreetMap'
+var osm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "© OpenStreetMap",
 });
 
-var google = L.tileLayer('http://{s}.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}', {
-    subdomains:['mt0'],
-    
-    attribution: '© Google maps'
-});
-
-
-
+var google = L.tileLayer(
+  "http://{s}.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}",
+  {
+    subdomains: ["mt0"],
+    attribution: "© Google maps",
+  }
+);
 
 var baseMaps = {
-  "OpenStreetMap": osm,
+  OpenStreetMap: osm,
   "Google maps": google,
-  
 };
-
 
 //------------------------------------------------------------------------------------------------------------------------
 //-- Функции
 
 const clearActiveMarkers = () => {
   markerList.forEach((marker, index) => {
-    setMarkerUnActive(marker)
-  })
+    setMarkerUnActive(marker);
+  });
   selectedMarkers = [];
-  
 };
 
 function CreatePolyline(options) {
@@ -68,11 +53,9 @@ function CreatePolyline(options) {
 
 const setMarkerActive = (marker) => {
   try {
-    L.DomUtil.addClass(marker._icon, "my-div-icon_active");  
-  } catch (error) {
-    
-  }
-  
+    L.DomUtil.addClass(marker._icon, "my-div-icon_active");
+  } catch (error) {}
+
   selectedMarkers.push(marker.options.id);
   setTimeout(() => {
     marker.setIcon(myIconActive);
@@ -81,32 +64,28 @@ const setMarkerActive = (marker) => {
 
 const setMarkerUnActive = (marker) => {
   try {
-    L.DomUtil.removeClass(marker._icon, "my-div-icon_active");  
-  } catch (error) {
-    
-  }
-  
-  selectedMarkers = selectedMarkers.filter(item => item !== marker.options.id);
+    L.DomUtil.removeClass(marker._icon, "my-div-icon_active");
+  } catch (error) {}
+
+  selectedMarkers = selectedMarkers.filter(
+    (item) => item !== marker.options.id
+  );
   setTimeout(() => {
     marker.setIcon(myIcon);
   }, 400);
 };
 
-
-function addMarker(data_in, icon, comment ) {
+function addMarker(data_in, icon, comment) {
   if (icon === undefined) {
-    icon = myIcon
+    icon = myIcon;
   }
-
- 
 
   L.marker(data_in, { icon: icon }).addTo(map).bindPopup(comment);
 }
 
-
-
-function cleanLayersGroup(id) { // удалить все слои пути id = route_0
-  myLayers[id].clearLayers()
+function cleanLayersGroup(id) {
+  // удалить все слои пути id = route_0
+  myLayers[id].clearLayers();
 }
 
 // рисуем кривую по геометрии в формате geoJSON
@@ -123,24 +102,17 @@ function RouteBuild(data_in, parseNeed = true) {
   const deliveryPoints = data_in.deliveryPoints;
   const myRoute = [];
 
-
-  const color = route.color || "red"
+  const color = route.color || "red";
 
   let options = { color: color };
 
   //alert(1);
 
-
- 
-  
-  
   var divIconGhost = L.divIcon({
     className: "my-div-icon",
     iconSize: 25,
     html: `<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
   });
-
-  
 
   let polylinePoints = [];
   let arCoordinates = route.geometry;
@@ -165,13 +137,9 @@ function RouteBuild(data_in, parseNeed = true) {
     map.fitBounds(polyline.getBounds());
   }
 
-  //alert(3);
-
   deliveryPoints.forEach((item, index) => {
     const coord = [];
     coord.push(item.ltd, item.lng);
-
-
 
     var myIcon = L.divIcon({
       className: `my-div-icon my-div-icon_${route.id}`,
@@ -179,7 +147,6 @@ function RouteBuild(data_in, parseNeed = true) {
       html: `<div class="my-div-icon_inner"><span class="my-div-icon_inner_number">${item.number}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
     });
 
- 
     let markerOptions = {
       icon: myIcon,
       title: item.textHover,
@@ -187,29 +154,53 @@ function RouteBuild(data_in, parseNeed = true) {
       // pane: "markers"
     };
 
-    let marker = L.marker(coord, markerOptions).bindPopup(`
-      ${Boolean(item.textPopup.partner) ? `<div><b>Контрагент:</b>${item.textPopup.partner}</div>` : ''}
-      ${Boolean(item.textPopup.weight) ? `<div><b>Вес:</b>${item.textPopup.weight}</div>` : ''}
-      ${Boolean(item.textPopup.volume) ? `<div><b>Объем:</b>${item.textPopup.volume}</div>` : ''}
-      ${Boolean(item.textPopup.address) ? `<div><b>Адрес:</b>${item.textPopup.address}</div>` : ''}
-      ${Boolean(item.textPopup.date) ? `<div><b>Интервал доставки:</b>${item.textPopup.date}</div>` : ''}
-      ${Boolean(item.textPopup.comment) ? `<div><b>Комментарий:</b>${item.textPopup.comment}</div>` : ''}
-      `, {
-      offset: [0, -20],
-    });
+    let marker = L.marker(coord, markerOptions).bindPopup(
+      `
+      ${
+        Boolean(item.textPopup.partner)
+          ? `<div><b>Контрагент:</b>${item.textPopup.partner}</div>`
+          : ""
+      }
+      ${
+        Boolean(item.textPopup.weight)
+          ? `<div><b>Вес:</b>${item.textPopup.weight}</div>`
+          : ""
+      }
+      ${
+        Boolean(item.textPopup.volume)
+          ? `<div><b>Объем:</b>${item.textPopup.volume}</div>`
+          : ""
+      }
+      ${
+        Boolean(item.textPopup.address)
+          ? `<div><b>Адрес:</b>${item.textPopup.address}</div>`
+          : ""
+      }
+      ${
+        Boolean(item.textPopup.date)
+          ? `<div><b>Интервал доставки:</b>${item.textPopup.date}</div>`
+          : ""
+      }
+      ${
+        Boolean(item.textPopup.comment)
+          ? `<div><b>Комментарий:</b>${item.textPopup.comment}</div>`
+          : ""
+      }
+      `,
+      {
+        offset: [0, -20],
+      }
+    );
 
-
-    
-    
     var circle = L.circleMarker(coord, {
       ...markerOptions,
       color: color,
       icon: divIconGhost,
       opacity: 0.25,
-      pane: "markers"
-  })
+      pane: "markers",
+    });
 
-  circleList.push(circle)
+    circleList.push(circle);
 
     markerList.push(marker);
     markers.addLayer(marker);
@@ -217,34 +208,20 @@ function RouteBuild(data_in, parseNeed = true) {
   // markers.addLayer(polyline);
 
   markers.on("click", function (e) {
-    const marker = e.sourceTarget
+    const marker = e.sourceTarget;
     // console.log(setMarkerActive)
     if (selectedMarkers.includes(marker.options.id)) {
       setMarkerUnActive(marker);
-      marker.closePopup()
+      marker.closePopup();
     } else {
       setMarkerActive(marker);
     }
-    
-  
   });
 
-  
+  myLayers[route.id] = L.layerGroup([polyline, markers, ...circleList]);
 
-
-  
-  
-
-
-  myLayers[route.id] =  L.layerGroup([ polyline, markers, ...circleList ])
-  
-
-
-
-
-  var layerControl = L.control.layers(baseMaps, {
-    [route.id]: myLayers[route.id],
-  }).addTo(map);
+  // console.log({ layerControl })
+  layerControl.addOverlay(myLayers[route.id], route.id);
 
   myLayers[route.id].addTo(map);
 }
@@ -253,13 +230,11 @@ function RouteBuild(data_in, parseNeed = true) {
 
 //---------------------------------------------------------------------------
 
-
 var myIcon = L.divIcon({
   className: "my-div-icon",
   iconSize: 50,
   html: '<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="#3276c3" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>',
 });
-
 
 // var divIconGhost = L.divIcon({
 //   className: "my-div-icon",
@@ -273,10 +248,8 @@ var myIconActive = L.divIcon({
   html: '<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="#3276c3" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>',
 });
 
-
-
 var myIconStock = L.icon({
-  iconUrl: '/img/icon.png',
+  iconUrl: "/img/icon.png",
   iconSize: [64, 64],
 });
 
@@ -287,19 +260,23 @@ function initMap(zoom = 4, showMarker = true) {
 
   map.setView(mapCenter, zoom);
 
-  engines = data_0.engines
+  engines = data_0.engines;
 
-  console.log('engines', engines)
+  if (engines && engines.length > 0) {
+    baseMaps = {};
+    for (let index = 0; index < engines.length; index++) {
+      const element = engines[index];
+      baseMaps[element.name] = L.tileLayer(element.link);
+    }
 
- if (engines && engines.length > 0) {
-  baseMaps = {}
-  for (let index = 0; index < engines.length; index++) {
-    const element = engines[index];
-    baseMaps[element?.name] = L.tileLayer(element.url)
+    layerControl = L.control.layers(baseMaps).addTo(map);
+
+    if (baseMaps.google) {
+      baseMaps.google.addTo(map);
+    } else if (baseMaps["GoogleMap"]) {
+      baseMaps["GoogleMap"].addTo(map);
+    }
   }
- }
-
-  
 
   if (showMarker) {
     addMarker(mapCenter, myIconStock, data_0.comment);
@@ -311,14 +288,10 @@ function ResetMap() {
   map.eachLayer((layer) => map.removeLayer(layer));
 }
 
-
-
-
 function createMap() {
   map = L.map("map", {
     boxZoom: false, //-- отключить выделение кнопкой SHIFT
     selectArea: true, //-- запускаем библиотеку выбор маркетор
-    
   });
 
   map._layersMaxZoom = 19;
@@ -334,8 +307,6 @@ function createMap() {
           setMarkerActive(marker);
         }
       });
-
-     
     });
   });
 
@@ -348,30 +319,20 @@ function createMap() {
 
   const areaSelection = new window.leafletAreaSelection.DrawAreaSelection({
     onPolygonReady: (polygon) => {
-
-      
-
-
-
       L.Util.requestAnimFrame(function () {
         markerList.forEach(function (marker, index, array) {
           if (polygon.getBounds().contains(marker.getLatLng())) {
             setMarkerActive(marker);
           }
         });
-  
-       
       });
     },
   });
 
   map.addControl(areaSelection);
-  
 
-
-
-  map.createPane('markers');
-  map.getPane('markers').style.zIndex = 401;
+  map.createPane("markers");
+  map.getPane("markers").style.zIndex = 401;
 }
 
 //-- функция служит для возврата с Карты в 1с массив выделенных координат
@@ -385,6 +346,23 @@ function clearMarkers() {
   selectedMarkers = [];
 }
 
+//  ищем маркер на маршруте и ставим в центр карты и открыаем его попап
+function setMarkerCenter(data2) {
+  if (!myLayers[data2.route_id]) {
+    alert(`маршрут ${data2.route_id} не отображен на карте `);
+  }
+  markers.eachLayer((marker) => {
+    if (marker.options.id === data2.id) {
+      setTimeout(() => {
+        marker.openPopup();
+      }, 500);
+      setMarkerActive(marker);
+    }
+  });
+
+  map.setView([data2.ltd, data2.lng], (zoom = 19));
+}
+
 // --------------------
 
 async function loadJson(url) {
@@ -394,21 +372,16 @@ async function loadJson(url) {
 }
 
 async function start() {
-  const dataInit = await loadJson("./data/1/data.json");
+  const dataInit = await loadJson("./data/next/0.json");
   const data_in = await loadJson("./data/next/1.json");
   const data2 = await loadJson("./data/next/2.json");
 
-  
-  window.data2 = data2
+  window.data2 = data2;
 
-  data_0 = dataInit
-  
+  data_0 = dataInit;
+
   createMap();
   initMap();
-
-  
-  google.addTo(map)
-    
 
   console.time("FirstWay");
   RouteBuild(JSON.stringify(data_in));
@@ -418,24 +391,3 @@ async function start() {
 (function () {
   start();
 })();
-
-
-function setMarkerCenter(data2) {
-  if (!myLayers[data2.route_id]) {
-    alert(`маршрут ${data2.route_id} не отображен на карте `)
-  }
-  markers.eachLayer((marker) => {
-    
-    if (marker.options.id === data2.id) {
-
-      
-      setTimeout(() => {
-        marker.openPopup();
-      }, 500);
-      setMarkerActive(marker)
-      
-    }
-  });
-  
-  map.setView([data2.ltd, data2.lng], zoom = 19);
-}

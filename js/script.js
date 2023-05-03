@@ -56,10 +56,25 @@ const setMarkerActive = (marker) => {
     L.DomUtil.addClass(marker._icon, "my-div-icon_active");
   } catch (error) {}
 
+
+  // console.log({ marker: marker.options })
+  const color = marker.options.icon.options.color
+  const number = marker.options.icon.options.number
+
+  const myIcon = L.divIcon({
+    className: `my-div-icon my-div-icon_active`,
+    iconSize: 50,
+    color: color,
+    number: number,
+    html: `<div class="my-div-icon_inner"><span class="my-div-icon_inner_number">${number}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+  });
+
+
+  // console.log({ options: marker.options })
   selectedMarkers.push(marker.options.id);
   setTimeout(() => {
-    marker.setIcon(myIconActive);
-  }, 400);
+    marker.setIcon(myIcon);
+  }, 300);
 };
 
 const setMarkerUnActive = (marker) => {
@@ -67,12 +82,24 @@ const setMarkerUnActive = (marker) => {
     L.DomUtil.removeClass(marker._icon, "my-div-icon_active");
   } catch (error) {}
 
+
+  const color = marker.options.icon.options.color
+  const number = marker.options.icon.options.number
+
+  const myIcon = L.divIcon({
+    className: `my-div-icon`,
+    iconSize: 50,
+    color: color,
+    number: number,
+    html: `<div class="my-div-icon_inner"><span class="my-div-icon_inner_number">${number}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+  });
+
   selectedMarkers = selectedMarkers.filter(
     (item) => item !== marker.options.id
   );
   setTimeout(() => {
     marker.setIcon(myIcon);
-  }, 400);
+  }, 300);
 };
 
 function addMarker(data_in, icon, comment) {
@@ -144,6 +171,8 @@ function RouteBuild(data_in, parseNeed = true) {
     var myIcon = L.divIcon({
       className: `my-div-icon my-div-icon_${route.id}`,
       iconSize: 50,
+      color: color,
+      number: item.number,
       html: `<div class="my-div-icon_inner"><span class="my-div-icon_inner_number">${item.number}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
     });
 

@@ -4,8 +4,8 @@ let data_0; // массив настроек
 
 let engines; // массив подложек
 
-const markers = L.markerClusterGroup(); //https://github.com/Leaflet/Leaflet.markercluster
-const circleList = [];
+
+
 let markerList = [];
 
 var selectedMarkers = [];
@@ -113,6 +113,8 @@ function addMarker(data_in, icon, comment) {
 function cleanLayersGroup(id) {
   // удалить все слои пути id = route_0
   myLayers[id].clearLayers();
+
+  layerControl.removeLayer(myLayers[id]);
 }
 
 // рисуем кривую по геометрии в формате geoJSON
@@ -125,6 +127,8 @@ function RouteBuild(data_in, parseNeed = true) {
     data_in = JSON.parse(data_in);
   }
 
+  const markers = L.markerClusterGroup(); //https://github.com/Leaflet/Leaflet.markercluster
+  const circleList = [];
   const route = data_in.route;
   const deliveryPoints = data_in.deliveryPoints;
   const myRoute = [];
@@ -180,6 +184,7 @@ function RouteBuild(data_in, parseNeed = true) {
       icon: myIcon,
       title: item.textHover,
       id: item.id,
+      route_id: route.id
       // pane: "markers"
     };
 
@@ -339,10 +344,7 @@ function createMap() {
     });
   });
 
-  map.on("click", (e) => {
-    // clearActiveMarkers();
-    // console.log(markers);
-  });
+
 
   map.selectArea.setControlKey(true);
 
@@ -380,7 +382,7 @@ function setMarkerCenter(data2) {
   if (!myLayers[data2.route_id]) {
     alert(`маршрут ${data2.route_id} не отображен на карте `);
   }
-  markers.eachLayer((marker) => {
+  markerList.forEach((marker) => {
     if (marker.options.id === data2.id) {
       setTimeout(() => {
         marker.openPopup();
@@ -403,6 +405,10 @@ async function loadJson(url) {
 async function start() {
   const dataInit = await loadJson("./data/next/0.json");
   const data_in = await loadJson("./data/next/1.json");
+  const data_route0 = await loadJson("./data/next/route/0.json");
+  const data_route1 = await loadJson("./data/next/route/1.json");
+  const data_route2 = await loadJson("./data/next/route/2.json");
+  
   const data2 = await loadJson("./data/next/2.json");
 
   window.data2 = data2;
@@ -414,6 +420,9 @@ async function start() {
 
   console.time("FirstWay");
   RouteBuild(JSON.stringify(data_in));
+  RouteBuild(JSON.stringify(data_route0));
+  RouteBuild(JSON.stringify(data_route1));
+  RouteBuild(JSON.stringify(data_route2));
   console.timeEnd("FirstWay");
 }
 

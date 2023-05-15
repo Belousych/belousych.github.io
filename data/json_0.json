@@ -1,0 +1,26 @@
+{
+  "map": "http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}",
+  "lat": 56.82275,
+  "lng": 60.617731,
+  "color": "black",
+  "description": "ЦентральныйОбъект.АдресСтрокой",
+  "comment": "Склад ЕКБ Белинского",
+  "engines": [
+    {
+      "name": "2GIS",
+      "link": "http://tile2.maps.2gis.com/tiles?x={x}&y={y}&z={z}"
+    },
+    {
+      "name": "GoogleMap",
+      "link": "http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}"
+    },
+    {
+      "name": "OSRM",
+      "link": "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
+    }
+  ],
+  "osrm": {
+    "ip": "85.12.197.184",
+    "port": 5000
+  }
+}

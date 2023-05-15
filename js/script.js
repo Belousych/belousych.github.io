@@ -66,7 +66,7 @@ const setMarkerActive = (marker) => {
     iconSize: 50,
     color: color,
     number: number,
-    html: `<div class="my-div-icon_inner"><span class="my-div-icon_inner_number">${number}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+    html: `<div class="my-div-icon_inner"><span class="my-div-icon_inner_number">${Boolean(number) ? number : ''}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
   });
 
 
@@ -91,7 +91,7 @@ const setMarkerUnActive = (marker) => {
     iconSize: 50,
     color: color,
     number: number,
-    html: `<div class="my-div-icon_inner"><span class="my-div-icon_inner_number">${number}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+    html: `<div class="my-div-icon_inner"><span class="my-div-icon_inner_number">${Boolean(number) ? number : ''}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
   });
 
   selectedMarkers = selectedMarkers.filter(
@@ -177,7 +177,7 @@ function RouteBuild(data_in, parseNeed = true) {
       iconSize: 50,
       color: color,
       number: item.number,
-      html: `<div class="my-div-icon_inner"><span class="my-div-icon_inner_number">${item.number}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+      html: `<div class="my-div-icon_inner"><span class="my-div-icon_inner_number">${Boolean(item.number) ? item.number : ''}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
     });
 
     let markerOptions = {
@@ -403,11 +403,12 @@ async function loadJson(url) {
 }
 
 async function start() {
-  const dataInit = await loadJson("./data/next/0.json");
-  const data_in = await loadJson("./data/next/1.json");
-  const data_route0 = await loadJson("./data/next/route/0.json");
-  const data_route1 = await loadJson("./data/next/route/1.json");
-  const data_route2 = await loadJson("./data/next/route/2.json");
+  const dataInit = await loadJson("./data/json_0.json");
+  
+  
+  const data_route0 = await loadJson("./data/route/json_0.json");
+  const data_route1 = await loadJson("./data/route/json_1.json");
+  
   
   const data2 = await loadJson("./data/next/2.json");
 
@@ -416,13 +417,13 @@ async function start() {
   data_0 = dataInit;
 
   createMap();
-  initMap();
+  initMap(4, true);
 
   console.time("FirstWay");
-  RouteBuild(JSON.stringify(data_in));
+  
   RouteBuild(JSON.stringify(data_route0));
   RouteBuild(JSON.stringify(data_route1));
-  RouteBuild(JSON.stringify(data_route2));
+  
   console.timeEnd("FirstWay");
 }
 

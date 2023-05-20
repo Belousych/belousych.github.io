@@ -60,13 +60,16 @@ const setMarkerActive = (marker) => {
   // console.log({ marker: marker.options })
   const color = marker.options.icon.options.color
   const number = marker.options.icon.options.number
+  const numberRoute = marker.options.icon.options.numberRoute
+
 
   const myIcon = L.divIcon({
     className: `my-div-icon my-div-icon_active`,
     iconSize: 50,
     color: color,
     number: number,
-    html: `<div class="my-div-icon_inner"><span class="my-div-icon_inner_number">${Boolean(number) ? number : ''}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+    numberRoute: numberRoute,
+    html: `<div class="my-div-icon_inner">${Boolean(numberRoute) ? `<span class="my-div-icon_inner_number-route">${numberRoute}</span>` : ''}<span class="my-div-icon_inner_number">${Boolean(number) ? number : ''}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
   });
 
 
@@ -85,13 +88,15 @@ const setMarkerUnActive = (marker) => {
 
   const color = marker.options.icon.options.color
   const number = marker.options.icon.options.number
+  const numberRoute = marker.options.icon.options.numberRoute
 
   const myIcon = L.divIcon({
     className: `my-div-icon`,
     iconSize: 50,
     color: color,
     number: number,
-    html: `<div class="my-div-icon_inner"><span class="my-div-icon_inner_number">${Boolean(number) ? number : ''}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+    numberRoute: numberRoute,
+    html: `<div class="my-div-icon_inner">${Boolean(numberRoute) ? `<span class="my-div-icon_inner_number-route">${numberRoute}</span>` : ''}<span class="my-div-icon_inner_number">${Boolean(number) ? number : ''}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
   });
 
   selectedMarkers = selectedMarkers.filter(
@@ -177,7 +182,8 @@ function RouteBuild(data_in, parseNeed = true) {
       iconSize: 50,
       color: color,
       number: item.number,
-      html: `<div class="my-div-icon_inner"><span class="my-div-icon_inner_number">${Boolean(item.number) ? item.number : ''}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+      numberRoute: item.numberRoute,
+      html: `<div class="my-div-icon_inner">${Boolean(item.numberRoute) ? `<span class="my-div-icon_inner_number-route">${item.numberRoute}</span>` : ''}<span class="my-div-icon_inner_number">${Boolean(item.number) ? item.number : ''}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
     });
 
     let markerOptions = {
@@ -304,6 +310,10 @@ function initMap(zoom = 4, showMarker = true) {
     }
 
     layerControl = L.control.layers(baseMaps).addTo(map);
+
+    L.easyButton('<span class="btn-toogle-number">№</span>', function(btn, map){
+      document.body.classList.toggle('show-numberRoute');
+  }).addTo(map);
 
     if (baseMaps.google) {
       baseMaps.google.addTo(map);

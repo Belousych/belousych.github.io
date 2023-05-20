@@ -30,7 +30,23 @@
     position: relative;
 }
 
-.my-div-icon_inner_number {
+
+.my-div-icon_inner_number-route {
+    visibility: hidden;
+    opacity: 0;
+}
+
+.show-numberRoute .my-div-icon_inner_number-route {
+    opacity: 1;
+    visibility: visible;
+}
+.show-numberRoute .my-div-icon_inner_number {
+    visibility: hidden;
+    opacity: 0;
+}
+
+
+.my-div-icon_inner_number, .my-div-icon_inner_number-route {
     
     font-size: 13px;
     color: black;

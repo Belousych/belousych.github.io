@@ -5,12 +5,15 @@ let data_0; // массив настроек
 let engines; // массив подложек
 
 
+let isCustomSequence = false
+
 
 let markerList = [];
 
 var selectedMarkers = [];
 
 var myLayers = {};
+var myMarkers = {};
 
 var layerControl;
 
@@ -57,10 +60,12 @@ const setMarkerActive = (marker) => {
   } catch (error) {}
 
 
+  selectedMarkers.push(marker.options.id);
+
   // console.log({ marker: marker.options })
   const color = marker.options.icon.options.color
-  const number = marker.options.icon.options.number
-  const numberRoute = marker.options.icon.options.numberRoute
+  const number = isCustomSequence ? selectedMarkers.length :  marker.options.icon.options.number
+  const numberRoute = isCustomSequence ? selectedMarkers.length : marker.options.icon.options.numberRoute
 
 
   const myIcon = L.divIcon({
@@ -73,8 +78,8 @@ const setMarkerActive = (marker) => {
   });
 
 
-  // console.log({ options: marker.options })
-  selectedMarkers.push(marker.options.id);
+  
+  
   setTimeout(() => {
     marker.setIcon(myIcon);
   }, 300);
@@ -87,8 +92,8 @@ const setMarkerUnActive = (marker) => {
 
 
   const color = marker.options.icon.options.color
-  const number = marker.options.icon.options.number
-  const numberRoute = marker.options.icon.options.numberRoute
+  const number = isCustomSequence ? 0 :  marker.options.icon.options.number
+  const numberRoute = isCustomSequence ? 0 : marker.options.icon.options.numberRoute
 
   const myIcon = L.divIcon({
     className: `my-div-icon`,
@@ -133,10 +138,13 @@ function RouteBuild(data_in, parseNeed = true) {
   }
 
   const markers = L.markerClusterGroup(); //https://github.com/Leaflet/Leaflet.markercluster
+  
   const circleList = [];
   const route = data_in.route;
   const deliveryPoints = data_in.deliveryPoints;
   const myRoute = [];
+
+  myMarkers[route.id] = []
 
   const color = route.color || "red";
 
@@ -243,7 +251,9 @@ function RouteBuild(data_in, parseNeed = true) {
     circleList.push(circle);
 
     markerList.push(marker);
+    myMarkers[route.id].push(marker)
     markers.addLayer(marker);
+    
   });
   // markers.addLayer(polyline);
 
@@ -256,9 +266,17 @@ function RouteBuild(data_in, parseNeed = true) {
     } else {
       setMarkerActive(marker);
     }
+
+    if (isCustomSequence) {
+      drawPoliline()
+    }
   });
 
-  myLayers[route.id] = L.layerGroup([polyline, markers, ...circleList]);
+  myLayers[route.id] = L.layerGroup([polyline, markers, ...circleList], {
+    color: color
+  });
+
+  
 
   // console.log({ layerControl })
   layerControl.addOverlay(myLayers[route.id], route.id);
@@ -276,11 +294,8 @@ var myIcon = L.divIcon({
   html: '<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="#3276c3" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>',
 });
 
-// var divIconGhost = L.divIcon({
-//   className: "my-div-icon",
-//   iconSize: 25,
-//   html: '<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="#3276c3" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>',
-// });
+var myIconDefault = myIcon
+
 
 var myIconActive = L.divIcon({
   className: "my-div-icon my-div-icon_active",
@@ -404,6 +419,51 @@ function setMarkerCenter(data2) {
   map.setView([data2.ltd, data2.lng], (zoom = 19));
 }
 
+
+
+// кастомная последовательность маршрута
+async function customSequence(data_in, parseNeed = true) {
+  isCustomSequence = true
+  if (parseNeed) {
+    data_in = JSON.parse(data_in);
+  }
+
+  
+
+  ResetMap() // ОЧИСТИМ карту
+  clearMarkers() // и выделенные маркеры на всякий случай
+
+  const id = data_in.route && data_in.route.id
+  
+  map.addLayer(baseMaps["GoogleMap"]) // вернем подложку
+
+  addMarker([data_0.lat, data_0.lng], myIconStock, data_0.comment); //поставим маркер склада
+  
+  if (myLayers[id]) {  // если роут с таким id уже есть то вернем его тоже на карту
+    map.addLayer(myLayers[id])
+  } else { // если нет то нарисуем как обычно
+    RouteBuild(data_in, false)
+  }
+
+  const color = myLayers[id].options.color
+
+  const myIcon = L.divIcon({
+    className: `my-div-icon my-div-icon_${id}`,
+    iconSize: 50,
+    color: color,
+    html: `<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+  });
+
+
+  L.Util.requestAnimFrame(function () {
+    myMarkers[id].forEach(function (marker, index, array) {
+      marker.setIcon(myIcon)
+    });
+  });
+
+ 
+  
+}
 // --------------------
 
 async function loadJson(url) {
@@ -424,6 +484,8 @@ async function start() {
 
   window.data2 = data2;
 
+  window.data_route1 = data_route1
+
   data_0 = dataInit;
 
   createMap();
@@ -436,6 +498,9 @@ async function start() {
   
   console.timeEnd("FirstWay");
 }
+
+
+
 
 (function () {
   start();

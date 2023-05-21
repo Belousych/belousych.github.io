@@ -7,6 +7,8 @@ let engines; // массив подложек
 
 let isCustomSequence = false
 
+let customSequenceMarkers = []
+
 
 let markerList = [];
 
@@ -78,7 +80,9 @@ const setMarkerActive = (marker) => {
     html: `<div class="my-div-icon_inner">${Boolean(numberRoute) ? `<span class="my-div-icon_inner_number-route">${numberRoute}</span>` : ''}<span class="my-div-icon_inner_number">${Boolean(number) ? number : ''}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
   });
 
-
+  if (isCustomSequence) {
+    customSequenceMarkers.push(marker)
+  }
   
   
   setTimeout(() => {
@@ -108,6 +112,15 @@ const setMarkerUnActive = (marker) => {
   selectedMarkers = selectedMarkers.filter(
     (item) => item !== marker.options.id
   );
+
+
+  if (isCustomSequence) {
+    customSequenceMarkers = customSequenceMarkers.filter(
+      (item) => item.options.id !== marker.options.id
+    );
+    
+  }
+
   setTimeout(() => {
     marker.setIcon(myIcon);
   }, 300);
@@ -269,7 +282,9 @@ function RouteBuild(data_in, parseNeed = true) {
     }
 
     if (isCustomSequence) {
-      drawPoliline()
+      
+      drawPolyline(route.id, polyline)
+
     }
   });
 
@@ -464,6 +479,47 @@ async function customSequence(data_in, parseNeed = true) {
 
  
   
+}
+
+
+async function drawPolyline(routeId, polyline) {
+  console.log(data_0)
+  
+
+  let req = []
+  req.push(`${data_0.lng},${data_0.lat}`)
+
+  for (let index = 0; index < customSequenceMarkers.length; index++) {
+    const marker = customSequenceMarkers[index];
+    req.push(`${marker.getLatLng().lng},${marker.getLatLng().lat}`)
+  }
+
+  const url = `http://${data_0.osrm.ip}:${data_0.osrm.port}/route/v1/driving/${req.join(';')}?overview=full&alternatives=true&steps=true&geometries=geojson`
+
+  const res = await loadJson(url);
+  
+  const route = res.routes[0]
+
+
+  let polylinePoints = [];
+  let arCoordinates = route.geometry.coordinates;
+
+  //треба поменять местами Долготу и Ширину
+  for (let i = 0; i < arCoordinates.length; i++) {
+    polylinePoints.push(new L.LatLng(arCoordinates[i][1], arCoordinates[i][0]));
+  }
+
+  //alert(2);
+
+  console.log(polyline)
+
+  //создаём линию маршрута
+  polyline.setLatLngs(polylinePoints)
+
+  polyline.redraw()
+  
+
+
 }
 // --------------------
 

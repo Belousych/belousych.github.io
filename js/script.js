@@ -274,6 +274,12 @@ function RouteBuild(data_in, parseNeed = true) {
   markers.on("click", function (e) {
     const marker = e.sourceTarget;
     // console.log(setMarkerActive)
+
+    // if (!isCustomSequence) { // TODO нужно уточнение всегда ли сбрасываем все активные маркеры?
+    //   allMarkerUnactive()
+    // }
+    allMarkerUnactive() // сбросим все активные маркеры
+
     if (selectedMarkers.includes(marker.options.id)) {
       setMarkerUnActive(marker);
       marker.closePopup();
@@ -363,6 +369,16 @@ function ResetMap() {
   map.eachLayer((layer) => map.removeLayer(layer));
 }
 
+function allMarkerUnactive() {
+  
+    markerList.forEach(function (marker, index, array) {
+      
+      setMarkerUnActive(marker);
+      
+    });
+  
+}
+
 function createMap() {
   map = L.map("map", {
     boxZoom: false, //-- отключить выделение кнопкой SHIFT
@@ -385,6 +401,10 @@ function createMap() {
     });
   });
 
+
+  map.on('click', function() {
+    allMarkerUnactive()
+  })
 
 
   map.selectArea.setControlKey(true);
@@ -508,14 +528,8 @@ async function drawPolyline(routeId, polyline) {
   for (let i = 0; i < arCoordinates.length; i++) {
     polylinePoints.push(new L.LatLng(arCoordinates[i][1], arCoordinates[i][0]));
   }
-
-  //alert(2);
-
-  console.log(polyline)
-
   //создаём линию маршрута
   polyline.setLatLngs(polylinePoints)
-
   polyline.redraw()
   
 

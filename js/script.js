@@ -49,6 +49,7 @@ function CreatePolyline(options) {
     color: options.color != undefined ? options.color : "red",
     weight: options.weight != undefined ? options.weight : 3,
     opacity: options.opacity != undefined ? options.opacity : 0.9,
+    isPolyline: true,
   };
 
   return polyline;

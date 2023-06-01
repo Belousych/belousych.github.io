@@ -517,10 +517,12 @@ async function drawPolyline(routeId, polyline) {
     req.push(`${marker.getLatLng().lng},${marker.getLatLng().lat}`)
   }
 
-  const url = `https://router.project-osrm.org:${data_0.osrm.port}/route/v1/driving/${req.join(';')}?overview=full&alternatives=true&steps=true&geometries=geojson`
+  const url = `https://router.project-osrm.org/route/v1/driving/${req.join(';')}?overview=full&alternatives=true&steps=true&geometries=geojson`
 
   const res = await loadJson(url);
   
+
+  console.log('res', res)
   const route = res.routes[0]
 
 

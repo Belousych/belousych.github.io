@@ -275,10 +275,10 @@ function RouteBuild(data_in, parseNeed = true) {
     const marker = e.sourceTarget;
     // console.log(setMarkerActive)
 
-    // if (!isCustomSequence) { // TODO нужно уточнение всегда ли сбрасываем все активные маркеры?
-    //   allMarkerUnactive()
-    // }
-    allMarkerUnactive() // сбросим все активные маркеры
+    if (!isCustomSequence) { // TODO нужно уточнение всегда ли сбрасываем все активные маркеры?
+      allMarkerUnactive()
+    }
+    // allMarkerUnactive() // сбросим все активные маркеры
 
     if (selectedMarkers.includes(marker.options.id)) {
       setMarkerUnActive(marker);
@@ -403,7 +403,10 @@ function createMap() {
 
 
   map.on('click', function() {
-    allMarkerUnactive()
+    if (!isCustomSequence) {
+      allMarkerUnactive()
+    }
+    
   })
 
 
@@ -514,7 +517,7 @@ async function drawPolyline(routeId, polyline) {
     req.push(`${marker.getLatLng().lng},${marker.getLatLng().lat}`)
   }
 
-  const url = `https://router.project-osrm.org:${data_0.osrm.port}/route/v1/driving/${req.join(';')}?overview=full&alternatives=true&steps=true&geometries=geojson`
+  const url = `http://router.project-osrm.org:${data_0.osrm.port}/route/v1/driving/${req.join(';')}?overview=full&alternatives=true&steps=true&geometries=geojson`
 
   const res = await loadJson(url);
   

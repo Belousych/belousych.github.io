@@ -514,7 +514,6 @@ async function drawPolyline(routeId, polyline) {
 
   for (let index = 0; index < customSequenceMarkers.length; index++) {
     const marker = customSequenceMarkers[index];
-    setMarkerActive(marker)
     req.push(`${marker.getLatLng().lng},${marker.getLatLng().lat}`)
   }
 

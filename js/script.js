@@ -4,11 +4,9 @@ let data_0; // массив настроек
 
 let engines; // массив подложек
 
+let isCustomSequence = false;
 
-let isCustomSequence = false
-
-let customSequenceMarkers = []
-
+let customSequenceMarkers = [];
 
 let markerList = [];
 
@@ -62,24 +60,24 @@ const setMarkerActive = (marker) => {
     L.DomUtil.addClass(marker._icon, "my-div-icon_active");
   } catch (error) {}
 
-
   selectedMarkers.push(marker.options.id);
 
-  var number = isCustomSequence ? selectedMarkers.length :  marker.options.icon.options.number
-  var numberRoute = isCustomSequence ? selectedMarkers.length : marker.options.icon.options.numberRoute
+  var number = isCustomSequence
+    ? selectedMarkers.length
+    : marker.options.icon.options.number;
+  var numberRoute = isCustomSequence
+    ? selectedMarkers.length
+    : marker.options.icon.options.numberRoute;
 
   if (isCustomSequence) {
     if (selectedMarkers.indexOf(marker.options.id) + 1) {
-      number = selectedMarkers.indexOf(marker.options.id) + 1
-      numberRoute = selectedMarkers.indexOf(marker.options.id) + 1
+      number = selectedMarkers.indexOf(marker.options.id) + 1;
+      numberRoute = selectedMarkers.indexOf(marker.options.id) + 1;
     }
-    
   }
 
   // console.log({ marker: marker.options })
-  const color = marker.options.icon.options.color
-  
-
+  const color = marker.options.icon.options.color;
 
   const myIcon = L.divIcon({
     className: `my-div-icon my-div-icon_active`,
@@ -87,14 +85,19 @@ const setMarkerActive = (marker) => {
     color: color,
     number: number,
     numberRoute: numberRoute,
-    html: `<div class="my-div-icon_inner">${Boolean(numberRoute) ? `<span class="my-div-icon_inner_number-route">${numberRoute}</span>` : ''}<span class="my-div-icon_inner_number">${Boolean(number) ? number : ''}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+    html: `<div class="my-div-icon_inner">${
+      Boolean(numberRoute)
+        ? `<span class="my-div-icon_inner_number-route">${numberRoute}</span>`
+        : ""
+    }<span class="my-div-icon_inner_number">${
+      Boolean(number) ? number : ""
+    }</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
   });
 
   if (isCustomSequence) {
-    customSequenceMarkers.push(marker)
+    customSequenceMarkers.push(marker);
   }
-  
-  
+
   setTimeout(() => {
     marker.setIcon(myIcon);
   }, 300);
@@ -105,10 +108,11 @@ const setMarkerUnActive = (marker) => {
     L.DomUtil.removeClass(marker._icon, "my-div-icon_active");
   } catch (error) {}
 
-
-  const color = marker.options.icon.options.color
-  const number = isCustomSequence ? 0 :  marker.options.icon.options.number
-  const numberRoute = isCustomSequence ? 0 : marker.options.icon.options.numberRoute
+  const color = marker.options.icon.options.color;
+  const number = isCustomSequence ? 0 : marker.options.icon.options.number;
+  const numberRoute = isCustomSequence
+    ? 0
+    : marker.options.icon.options.numberRoute;
 
   const myIcon = L.divIcon({
     className: `my-div-icon`,
@@ -116,19 +120,23 @@ const setMarkerUnActive = (marker) => {
     color: color,
     number: number,
     numberRoute: numberRoute,
-    html: `<div class="my-div-icon_inner">${Boolean(numberRoute) ? `<span class="my-div-icon_inner_number-route">${numberRoute}</span>` : ''}<span class="my-div-icon_inner_number">${Boolean(number) ? number : ''}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+    html: `<div class="my-div-icon_inner">${
+      Boolean(numberRoute)
+        ? `<span class="my-div-icon_inner_number-route">${numberRoute}</span>`
+        : ""
+    }<span class="my-div-icon_inner_number">${
+      Boolean(number) ? number : ""
+    }</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
   });
 
   selectedMarkers = selectedMarkers.filter(
     (item) => item !== marker.options.id
   );
 
-
   if (isCustomSequence) {
     customSequenceMarkers = customSequenceMarkers.filter(
       (item) => item.options.id !== marker.options.id
     );
-    
   }
 
   setTimeout(() => {
@@ -162,13 +170,13 @@ function RouteBuild(data_in, parseNeed = true) {
   }
 
   const markers = L.markerClusterGroup(); //https://github.com/Leaflet/Leaflet.markercluster
-  
+
   const circleList = [];
   const route = data_in.route;
   const deliveryPoints = data_in.deliveryPoints;
   const myRoute = [];
 
-  myMarkers[route.id] = []
+  myMarkers[route.id] = [];
 
   const color = route.color || "red";
 
@@ -215,14 +223,20 @@ function RouteBuild(data_in, parseNeed = true) {
       color: color,
       number: item.number,
       numberRoute: item.numberRoute,
-      html: `<div class="my-div-icon_inner">${Boolean(item.numberRoute) ? `<span class="my-div-icon_inner_number-route">${item.numberRoute}</span>` : ''}<span class="my-div-icon_inner_number">${Boolean(item.number) ? item.number : ''}</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+      html: `<div class="my-div-icon_inner">${
+        Boolean(item.numberRoute)
+          ? `<span class="my-div-icon_inner_number-route">${item.numberRoute}</span>`
+          : ""
+      }<span class="my-div-icon_inner_number">${
+        Boolean(item.number) ? item.number : ""
+      }</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
     });
 
     let markerOptions = {
       icon: myIcon,
       title: item.textHover,
       id: item.id,
-      route_id: route.id
+      route_id: route.id,
       // pane: "markers"
     };
 
@@ -275,9 +289,8 @@ function RouteBuild(data_in, parseNeed = true) {
     circleList.push(circle);
 
     markerList.push(marker);
-    myMarkers[route.id].push(marker)
+    myMarkers[route.id].push(marker);
     markers.addLayer(marker);
-    
   });
   // markers.addLayer(polyline);
 
@@ -285,8 +298,9 @@ function RouteBuild(data_in, parseNeed = true) {
     const marker = e.sourceTarget;
     // console.log(setMarkerActive)
 
-    if (!isCustomSequence) { // TODO нужно уточнение всегда ли сбрасываем все активные маркеры?
-      allMarkerUnactive()
+    if (!isCustomSequence) {
+      // TODO нужно уточнение всегда ли сбрасываем все активные маркеры?
+      allMarkerUnactive();
     }
     // allMarkerUnactive() // сбросим все активные маркеры
 
@@ -298,17 +312,13 @@ function RouteBuild(data_in, parseNeed = true) {
     }
 
     if (isCustomSequence) {
-      
-      drawPolyline(route.id, polyline)
-
+      drawPolyline(route.id, polyline);
     }
   });
 
   myLayers[route.id] = L.layerGroup([polyline, markers, ...circleList], {
-    color: color
+    color: color,
   });
-
-  
 
   // console.log({ layerControl })
   layerControl.addOverlay(myLayers[route.id], route.id);
@@ -326,8 +336,7 @@ var myIcon = L.divIcon({
   html: '<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="#3276c3" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>',
 });
 
-var myIconDefault = myIcon
-
+var myIconDefault = myIcon;
 
 var myIconActive = L.divIcon({
   className: "my-div-icon my-div-icon_active",
@@ -358,9 +367,12 @@ function initMap(zoom = 4, showMarker = true) {
 
     layerControl = L.control.layers(baseMaps).addTo(map);
 
-    L.easyButton('<span class="btn-toogle-number">№</span>', function(btn, map){
-      document.body.classList.toggle('show-numberRoute');
-  }).addTo(map);
+    L.easyButton(
+      '<span class="btn-toogle-number">№</span>',
+      function (btn, map) {
+        document.body.classList.toggle("show-numberRoute");
+      }
+    ).addTo(map);
 
     if (baseMaps.google) {
       baseMaps.google.addTo(map);
@@ -380,13 +392,9 @@ function ResetMap() {
 }
 
 function allMarkerUnactive() {
-  
-    markerList.forEach(function (marker, index, array) {
-      
-      setMarkerUnActive(marker);
-      
-    });
-  
+  markerList.forEach(function (marker, index, array) {
+    setMarkerUnActive(marker);
+  });
 }
 
 function createMap() {
@@ -411,14 +419,11 @@ function createMap() {
     });
   });
 
-
-  map.on('click', function() {
+  map.on("click", function () {
     if (!isCustomSequence) {
-      allMarkerUnactive()
+      allMarkerUnactive();
     }
-    
-  })
-
+  });
 
   map.selectArea.setControlKey(true);
 
@@ -468,33 +473,31 @@ function setMarkerCenter(data2) {
   map.setView([data2.ltd, data2.lng], (zoom = 19));
 }
 
-
-
 // кастомная последовательность маршрута
 async function customSequence(data_in, parseNeed = true) {
-  isCustomSequence = true
+  isCustomSequence = true;
   if (parseNeed) {
     data_in = JSON.parse(data_in);
   }
 
-  
+  ResetMap(); // ОЧИСТИМ карту
+  clearMarkers(); // и выделенные маркеры на всякий случай
 
-  ResetMap() // ОЧИСТИМ карту
-  clearMarkers() // и выделенные маркеры на всякий случай
+  const id = data_in.route && data_in.route.id;
 
-  const id = data_in.route && data_in.route.id
-  
-  map.addLayer(baseMaps["GoogleMap"]) // вернем подложку
+  map.addLayer(baseMaps["GoogleMap"]); // вернем подложку
 
   addMarker([data_0.lat, data_0.lng], myIconStock, data_0.comment); //поставим маркер склада
-  
-  if (myLayers[id]) {  // если роут с таким id уже есть то вернем его тоже на карту
-    map.addLayer(myLayers[id])
-  } else { // если нет то нарисуем как обычно
-    RouteBuild(data_in, false)
+
+  if (myLayers[id]) {
+    // если роут с таким id уже есть то вернем его тоже на карту
+    map.addLayer(myLayers[id]);
+  } else {
+    // если нет то нарисуем как обычно
+    RouteBuild(data_in, false);
   }
 
-  const color = myLayers[id].options.color
+  const color = myLayers[id].options.color;
 
   const myIcon = L.divIcon({
     className: `my-div-icon my-div-icon_${id}`,
@@ -503,38 +506,63 @@ async function customSequence(data_in, parseNeed = true) {
     html: `<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
   });
 
-
   L.Util.requestAnimFrame(function () {
     myMarkers[id].forEach(function (marker, index, array) {
-      marker.setIcon(myIcon)
+      marker.setIcon(myIcon);
     });
   });
-
- 
-  
 }
 
-
 async function drawPolyline(routeId, polyline) {
-  console.log(data_0)
-  
+  console.log(data_0);
 
-  let req = []
-  req.push(`${data_0.lng},${data_0.lat}`)
+  let req = [];
+  req.push(`${data_0.lng},${data_0.lat}`);
 
   for (let index = 0; index < customSequenceMarkers.length; index++) {
     const marker = customSequenceMarkers[index];
-    req.push(`${marker.getLatLng().lng},${marker.getLatLng().lat}`)
+
+    var number = marker.options.icon.options.number;
+    var numberRoute = marker.options.icon.options.numberRoute;
+
+    if (isCustomSequence) {
+      if (selectedMarkers.indexOf(marker.options.id) + 1) {
+        number = selectedMarkers.indexOf(marker.options.id) + 1;
+        numberRoute = selectedMarkers.indexOf(marker.options.id) + 1;
+      }
+    }
+
+    // console.log({ marker: marker.options })
+    const color = marker.options.icon.options.color;
+
+    const myIcon = L.divIcon({
+      className: `my-div-icon my-div-icon_active`,
+      iconSize: 50,
+      color: color,
+      number: number,
+      numberRoute: numberRoute,
+      html: `<div class="my-div-icon_inner">${
+        Boolean(numberRoute)
+          ? `<span class="my-div-icon_inner_number-route">${numberRoute}</span>`
+          : ""
+      }<span class="my-div-icon_inner_number">${
+        Boolean(number) ? number : ""
+      }</span><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+    });
+
+    setTimeout(() => {
+      marker.setIcon(myIcon);
+    }, 400);
+    req.push(`${marker.getLatLng().lng},${marker.getLatLng().lat}`);
   }
 
-  const url = `https://router.project-osrm.org/route/v1/driving/${req.join(';')}?overview=full&alternatives=true&steps=true&geometries=geojson`
+  const url = `https://router.project-osrm.org/route/v1/driving/${req.join(
+    ";"
+  )}?overview=full&alternatives=true&steps=true&geometries=geojson`;
 
   const res = await loadJson(url);
-  
 
-
-  const route = res.routes[0]
-
+  const route = res.routes[0];
 
   let polylinePoints = [];
   let arCoordinates = route.geometry.coordinates;
@@ -544,11 +572,8 @@ async function drawPolyline(routeId, polyline) {
     polylinePoints.push(new L.LatLng(arCoordinates[i][1], arCoordinates[i][0]));
   }
   //создаём линию маршрута
-  polyline.setLatLngs(polylinePoints)
-  polyline.redraw()
-  
-
-
+  polyline.setLatLngs(polylinePoints);
+  polyline.redraw();
 }
 // --------------------
 
@@ -560,17 +585,15 @@ async function loadJson(url) {
 
 async function start() {
   const dataInit = await loadJson("./data/json_0.json");
-  
-  
+
   const data_route0 = await loadJson("./data/route/json_0.json");
   const data_route1 = await loadJson("./data/route/json_1.json");
-  
-  
+
   const data2 = await loadJson("./data/next/2.json");
 
   window.data2 = data2;
 
-  window.data_route1 = data_route1
+  window.data_route1 = data_route1;
 
   data_0 = dataInit;
 
@@ -578,15 +601,12 @@ async function start() {
   initMap(4, true);
 
   console.time("FirstWay");
-  
+
   RouteBuild(JSON.stringify(data_route0));
   RouteBuild(JSON.stringify(data_route1));
-  
+
   console.timeEnd("FirstWay");
 }
-
-
-
 
 (function () {
   start();

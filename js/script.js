@@ -65,10 +65,20 @@ const setMarkerActive = (marker) => {
 
   selectedMarkers.push(marker.options.id);
 
+  var number = isCustomSequence ? selectedMarkers.length :  marker.options.icon.options.number
+  var numberRoute = isCustomSequence ? selectedMarkers.length : marker.options.icon.options.numberRoute
+
+  if (isCustomSequence) {
+    if (selectedMarkers.indexOf(marker.options.id) + 1) {
+      number = selectedMarkers.indexOf(marker.options.id) + 1
+      numberRoute = selectedMarkers.indexOf(marker.options.id) + 1
+    }
+    
+  }
+
   // console.log({ marker: marker.options })
   const color = marker.options.icon.options.color
-  const number = isCustomSequence ? selectedMarkers.length :  marker.options.icon.options.number
-  const numberRoute = isCustomSequence ? selectedMarkers.length : marker.options.icon.options.numberRoute
+  
 
 
   const myIcon = L.divIcon({
@@ -523,7 +533,7 @@ async function drawPolyline(routeId, polyline) {
   const res = await loadJson(url);
   
 
-  console.log('res', res)
+
   const route = res.routes[0]
 
 

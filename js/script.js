@@ -203,6 +203,19 @@ function RouteBuild(data_in, parseNeed = true) {
   //создаём линию маршрута
   const polyline = new L.Polyline(polylinePoints, CreatePolyline(options));
 
+  var decorator = L.polylineDecorator(polyline, {
+    patterns: [
+      // defines a pattern of 10px-wide dashes, repeated every 20px on the line
+      { offset: '0', repeat: '5%', symbol: L.Symbol.marker({rotate: true, markerOptions: {
+        icon: L.icon({
+            iconUrl: './img/map.svg',
+            iconSize: [16, 16],
+            iconAnchor: [8, 8],
+        })
+    }})}
+    ],
+  });
+
   //alert(route.lineColor);
 
   if (polylinePoints.length != 0) {
@@ -316,7 +329,7 @@ function RouteBuild(data_in, parseNeed = true) {
     }
   });
 
-  myLayers[route.id] = L.layerGroup([polyline, markers, ...circleList], {
+  myLayers[route.id] = L.layerGroup([polyline,decorator, markers, ...circleList], {
     color: color,
   });
 

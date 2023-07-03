@@ -3,6 +3,8 @@
     "@bopen/leaflet-area-selection": "^0.7.0",
     "leaflet-area-select": "^1.0.5",
     "leaflet-easybutton": "^2.4.0",
-    "leaflet.markercluster": "^1.5.3"
+    "leaflet-polylinedecorator": "^1.6.0",
+    "leaflet.markercluster": "^1.5.3",
+    "leaflet.motion": "^0.3.2"
   }
 }

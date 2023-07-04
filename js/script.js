@@ -206,7 +206,7 @@ function RouteBuild(data_in, parseNeed = true) {
   var decorator = L.polylineDecorator(polyline, {
     patterns: [
       // defines a pattern of 10px-wide dashes, repeated every 20px on the line
-      { offset: '0', repeat: '5%', symbol: L.Symbol.marker({rotate: true, markerOptions: {
+      { offset: '0', repeat: '200px', symbol: L.Symbol.marker({rotate: true, markerOptions: {
         icon: L.icon({
             iconUrl: './img/map.svg',
             iconSize: [16, 16],
@@ -325,7 +325,7 @@ function RouteBuild(data_in, parseNeed = true) {
     }
 
     if (isCustomSequence) {
-      drawPolyline(route.id, polyline);
+      drawPolyline(route.id, polyline, decorator);
     }
   });
 
@@ -526,8 +526,8 @@ async function customSequence(data_in, parseNeed = true) {
   });
 }
 
-async function drawPolyline(routeId, polyline) {
-  console.log(data_0);
+async function drawPolyline(routeId, polyline, decorator) {
+
 
   let req = [];
   req.push(`${data_0.lng},${data_0.lat}`);
@@ -587,6 +587,7 @@ async function drawPolyline(routeId, polyline) {
   //создаём линию маршрута
   polyline.setLatLngs(polylinePoints);
   polyline.redraw();
+  decorator.setPaths(polylinePoints)
 }
 // --------------------
 

@@ -173,6 +173,10 @@ function RouteBuild(data_in, parseNeed = true) {
 
   const circleList = [];
   const route = data_in.route;
+  const road = data_in.road;
+  let polylinePointsRoad = [];
+  let arCoordinatesRoad = data_in?.road && road.geometry;
+
   const deliveryPoints = data_in.deliveryPoints;
   const myRoute = [];
 
@@ -206,13 +210,20 @@ function RouteBuild(data_in, parseNeed = true) {
   var decorator = L.polylineDecorator(polyline, {
     patterns: [
       // defines a pattern of 10px-wide dashes, repeated every 20px on the line
-      { offset: '0', repeat: '200px', symbol: L.Symbol.marker({rotate: true, markerOptions: {
-        icon: L.icon({
-            iconUrl: './img/map.svg',
-            iconSize: [16, 16],
-            iconAnchor: [8, 8],
-        })
-    }})}
+      {
+        offset: "0",
+        repeat: "200px",
+        symbol: L.Symbol.marker({
+          rotate: true,
+          markerOptions: {
+            icon: L.icon({
+              iconUrl: "./img/map.svg",
+              iconSize: [16, 16],
+              iconAnchor: [8, 8],
+            }),
+          },
+        }),
+      },
     ],
   });
 
@@ -329,11 +340,43 @@ function RouteBuild(data_in, parseNeed = true) {
     }
   });
 
-  myLayers[route.id] = L.layerGroup([polyline,decorator, markers, ...circleList], {
-    color: color,
-  });
+  myLayers[route.id] = L.layerGroup(
+    [polyline, decorator, markers, ...circleList],
+    {
+      color: color,
+    }
+  );
 
-  // console.log({ layerControl })
+  //-- Реальный маршрут проезда
+  if (!!arCoordinatesRoad && arCoordinatesRoad.length != 0) {
+    options.color = "black";
+
+    for (let i = 0; i < arCoordinatesRoad.length; i++) {
+      polylinePointsRoad.push(
+        new L.LatLng(arCoordinatesRoad[i][1], arCoordinatesRoad[i][0])
+      );
+    }
+
+    const polylineRoad = new L.Polyline(
+      polylinePointsRoad,
+      CreatePolyline(options)
+    );
+
+    // myLayers[route.id].addLayer(polylineRoad);
+
+    var trackPolyline = L.motion.polyline(polylinePointsRoad, {
+      color:"red"
+    }, null, {
+      removeOnEnd: false,
+      icon: L.divIcon({className: 'my-truck', html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>`, iconSize: L.point(19, 24)})
+    }).motionDuration(20000);
+
+    var seqGroup = L.motion.seq([trackPolyline]).addTo(map);
+
+    // Start the motion (you could put this in a timer, or some other event)
+    seqGroup.motionStart();
+  }
+
   layerControl.addOverlay(myLayers[route.id], route.id);
 
   myLayers[route.id].addTo(map);
@@ -527,8 +570,6 @@ async function customSequence(data_in, parseNeed = true) {
 }
 
 async function drawPolyline(routeId, polyline, decorator) {
-
-
   let req = [];
   req.push(`${data_0.lng},${data_0.lat}`);
 
@@ -587,7 +628,7 @@ async function drawPolyline(routeId, polyline, decorator) {
   //создаём линию маршрута
   polyline.setLatLngs(polylinePoints);
   polyline.redraw();
-  decorator.setPaths(polylinePoints)
+  decorator.setPaths(polylinePoints);
 }
 // --------------------
 

@@ -486,7 +486,8 @@ function createMap() {
     });
   });
 
-  map.on("click", function () {
+  map.on("click", function (e) {
+    console.log(e)
     if (!isCustomSequence) {
       allMarkerUnactive();
     }
@@ -643,7 +644,7 @@ async function drawPolyline(routeId, polyline, decorator) {
 }
 
 // функция показать геозоны
-const showAllGeoZones = (data_geozones) => {
+async function showAllGeoZones(data_geozones) {
   let polygons = [];
 
   var bounds;
@@ -669,6 +670,8 @@ const showAllGeoZones = (data_geozones) => {
       map
     );
 
+    console.log(polygon.getBounds())
+
     polygons.push(polygon)
 
     if (bounds) {
@@ -690,6 +693,19 @@ const showAllGeoZones = (data_geozones) => {
 
 
 };
+
+async function createNewGeoZones() {
+  const areaSelection = new window.leafletAreaSelection.DrawAreaSelection({
+    active: true,
+    onPolygonReady: (polygon) => {
+      
+    },
+  });
+
+  map.addControl(areaSelection); 
+  areaSelection.activate()
+}
+
 
 // --------------------
 

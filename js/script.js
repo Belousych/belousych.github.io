@@ -364,12 +364,23 @@ function RouteBuild(data_in, parseNeed = true) {
 
     // myLayers[route.id].addLayer(polylineRoad);
 
-    var trackPolyline = L.motion.polyline(polylinePointsRoad, {
-      color:"red"
-    }, null, {
-      removeOnEnd: false,
-      icon: L.divIcon({className: 'my-truck', html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>`, iconSize: L.point(19, 24)})
-    }).motionDuration(20000);
+    var trackPolyline = L.motion
+      .polyline(
+        polylinePointsRoad,
+        {
+          color: "red",
+        },
+        null,
+        {
+          removeOnEnd: false,
+          icon: L.divIcon({
+            className: "my-truck",
+            html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>`,
+            iconSize: L.point(19, 24),
+          }),
+        }
+      )
+      .motionDuration(20000);
 
     var seqGroup = L.motion.seq([trackPolyline]).addTo(map);
 
@@ -630,6 +641,56 @@ async function drawPolyline(routeId, polyline, decorator) {
   polyline.redraw();
   decorator.setPaths(polylinePoints);
 }
+
+// функция показать геозоны
+const showAllGeoZones = (data_geozones) => {
+  let polygons = [];
+
+  var bounds;
+
+
+
+  for (let index = 0; index < data_geozones.length; index++) {
+    const element = data_geozones[index];
+    const coordinates =
+      !!element && !!element.geometry && element.geometry.coordinates;
+
+    var polylinePoints = [];
+
+    //треба поменять местами Долготу и Ширину
+    for (let i = 0; i < coordinates[0].length; i++) {
+      var el = coordinates[0][i]
+      polylinePoints.push(new L.LatLng(el[1], el[0]));
+    }
+
+    
+
+    var polygon = L.polygon(polylinePoints, { color: element.color }).addTo(
+      map
+    );
+
+    polygons.push(polygon)
+
+    if (bounds) {
+      bounds.extend(polygon.getBounds())
+    } else {
+      bounds = polygon.getBounds()
+    }
+
+    
+  }
+
+
+  myLayers.geozones = L.layerGroup(
+    [...polygons],
+  ).addTo(map);
+
+
+  map.fitBounds(bounds);
+
+
+};
+
 // --------------------
 
 async function loadJson(url) {
@@ -643,12 +704,14 @@ async function start() {
 
   const data_route0 = await loadJson("./data/route/json_0.json");
   const data_route1 = await loadJson("./data/route/json_1.json");
+  const data_geozones = await loadJson("./data/geozones.json");
 
   const data2 = await loadJson("./data/next/2.json");
 
   window.data2 = data2;
 
   window.data_route1 = data_route1;
+  window.data_geozones = data_geozones;
 
   data_0 = dataInit;
 
@@ -660,6 +723,7 @@ async function start() {
   RouteBuild(JSON.stringify(data_route0));
   RouteBuild(JSON.stringify(data_route1));
 
+  showAllGeoZones(data_geozones);
   console.timeEnd("FirstWay");
 }
 

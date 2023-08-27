@@ -796,11 +796,14 @@ async function showAllGeoZones(data_geozones = []) {
 
 
         window.newGeozone = polygon
+
+
+        safeButton.addTo(map)
+        cancelButton.addTo(map)
       },
       onPolygonDblClick: (polygon, control, ev) => {},
       onButtonActivate: () => {
-        safeButton.addTo(map)
-        cancelButton.addTo(map)
+        
       },
       onButtonDeactivate: (polygon) => {
         

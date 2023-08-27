@@ -12,6 +12,8 @@ let markerList = [];
 
 var selectedMarkers = [];
 
+var data_geozones = []
+
 var myLayers = {};
 var myMarkers = {};
 
@@ -441,6 +443,10 @@ function initMap(zoom = 4, showMarker = true) {
       }
     ).addTo(map);
 
+
+
+    
+
     if (baseMaps.google) {
       baseMaps.google.addTo(map);
     } else if (baseMaps["GoogleMap"]) {
@@ -487,7 +493,7 @@ function createMap() {
   });
 
   map.on("click", function (e) {
-    console.log(e)
+    console.log(e);
     if (!isCustomSequence) {
       allMarkerUnactive();
     }
@@ -495,19 +501,22 @@ function createMap() {
 
   map.selectArea.setControlKey(true);
 
-  const areaSelection = new window.leafletAreaSelection.DrawAreaSelection({
-    onPolygonReady: (polygon) => {
-      L.Util.requestAnimFrame(function () {
-        markerList.forEach(function (marker, index, array) {
-          if (polygon.getBounds().contains(marker.getLatLng())) {
-            setMarkerActive(marker);
-          }
-        });
-      });
-    },
-  });
+  // const areaSelection = new window.leafletAreaSelection.DrawAreaSelection({
+  //   onPolygonReady: (polygon) => {
+  //     L.Util.requestAnimFrame(function () {
+  //       markerList.forEach(function (marker, index, array) {
+  //         if (polygon.getBounds().contains(marker.getLatLng())) {
+  //           setMarkerActive(marker);
+  //         }
+  //       });
+  //     });
+  //   },
+  // });
 
-  map.addControl(areaSelection);
+  // map.addControl(areaSelection);
+
+
+ 
 
   map.createPane("markers");
   map.getPane("markers").style.zIndex = 401;
@@ -643,13 +652,26 @@ async function drawPolyline(routeId, polyline, decorator) {
   decorator.setPaths(polylinePoints);
 }
 
+
+// функция возврата геозоны новое
+async function returnGeoZone() {
+  if (newGeozone) {
+    return JSON.stringify(newGeozone.getLatLngs());
+  }
+}
+
 // функция показать геозоны
-async function showAllGeoZones(data_geozones) {
+async function showAllGeoZones(data_geozones = []) {
   let polygons = [];
+
+  window.data_geozones = data_geozones;
 
   var bounds;
 
-
+  if (myLayers.geozones) {
+    
+    myLayers.geozones.clearLayers()
+  }
 
   for (let index = 0; index < data_geozones.length; index++) {
     const element = data_geozones[index];
@@ -660,52 +682,151 @@ async function showAllGeoZones(data_geozones) {
 
     //треба поменять местами Долготу и Ширину
     for (let i = 0; i < coordinates[0].length; i++) {
-      var el = coordinates[0][i]
+      var el = coordinates[0][i];
       polylinePoints.push(new L.LatLng(el[1], el[0]));
     }
 
-    
+    var polygon = L.polygon(polylinePoints, { color: element.color })
 
-    var polygon = L.polygon(polylinePoints, { color: element.color }).addTo(
-      map
-    );
-
-    console.log(polygon.getBounds())
-
-    polygons.push(polygon)
+    polygons.push(polygon);
 
     if (bounds) {
-      bounds.extend(polygon.getBounds())
+      bounds.extend(polygon.getBounds());
     } else {
-      bounds = polygon.getBounds()
+      bounds = polygon.getBounds();
     }
+  }
+  
+  myLayers.geozones = new L.layerGroup([...polygons]).addTo(map);
 
+  if (bounds) {
+    map.fitBounds(bounds);
+  }
+  
+
+  if (!window.areaSelection) {
     
+
+
+    var safeButton = L.easyButton('<span class="btn-save-geo">✓</span>', function (btn, map) {
+      console.log("сохранить геозону");
+
+      if (safeButton) {
+        map.removeControl(safeButton)
+      }
+
+      if (cancelButton) {
+        map.removeControl(cancelButton)
+      }
+
+
+
+      if (window.newGeozone) {
+        
+        window.newGeozone = null
+
+        returnGeoZone()
+      }
+    })
+  
+    var cancelButton = L.easyButton('<span class="btn-cancel-geo">x</span>', function (btn, map) {
+      console.log("отменить геозону");
+      if (safeButton) {
+        map.removeControl(safeButton)
+      }
+
+      if (cancelButton) {
+        map.removeControl(cancelButton)
+      }
+
+      if (window.newGeozone) {
+        map.removeLayer(newGeozone)
+        window.newGeozone = null
+      }
+    })
+
+    const areaSelection = new window.leafletAreaSelection.DrawAreaSelection({
+
+       
+      
+      onPolygonReady: (polygon) => {
+        
+  
+  
+        
+  
+        const geojson = polygon.toGeoJSON();
+  
+        const turfPolygon = turf.polygon(geojson.geometry.coordinates);
+  
+        
+  
+        const polygons = [];
+        
+        
+
+        for (let index = 0; index < window.data_geozones.length; index++) {
+          const element = window.data_geozones[index];
+          polygons.push(element.geometry.coordinates);
+        }
+  
+        const turfMultiPolygons = turf.multiPolygon(polygons);
+  
+        const diff = turf.difference(turfPolygon, turfMultiPolygons);
+  
+        
+  
+        areaSelection.deactivate();
+
+        
+  
+        const coordinates = diff.geometry.coordinates;
+  
+        var polylinePoints = [];
+  
+        //треба поменять местами Долготу и Ширину
+        for (let i = 0; i < coordinates[0].length; i++) {
+          var el = coordinates[0][i];
+          polylinePoints.push(new L.LatLng(el[1], el[0]));
+        }
+  
+        var polygon = L.polygon(polylinePoints, {
+          color: "red",
+        }).addTo(map);
+
+
+        window.newGeozone = polygon
+      },
+      onPolygonDblClick: (polygon, control, ev) => {},
+      onButtonActivate: () => {
+        safeButton.addTo(map)
+        cancelButton.addTo(map)
+      },
+      onButtonDeactivate: (polygon) => {
+        
+      },
+      position: "topleft",
+    });
+  
+    map.addControl(areaSelection);
+
+    window.areaSelection = areaSelection
   }
 
-
-  myLayers.geozones = L.layerGroup(
-    [...polygons],
-  ).addTo(map);
-
-
-  map.fitBounds(bounds);
-
-
-};
-
-async function createNewGeoZones() {
-  const areaSelection = new window.leafletAreaSelection.DrawAreaSelection({
-    active: true,
-    onPolygonReady: (polygon) => {
-      
-    },
-  });
-
-  map.addControl(areaSelection); 
-  areaSelection.activate()
+  
 }
 
+async function createNewGeoZones(options = {}) {
+  
+
+  L.easyButton('<span class="btn-save-geo">✓</span>', function (btn, map) {
+    console.log("сохранить геозону");
+  }).addTo(map);
+
+  L.easyButton('<span class="btn-cancel-geo">x</span>', function (btn, map) {
+    console.log("отменить геозону");
+  }).addTo(map);
+}
 
 // --------------------
 

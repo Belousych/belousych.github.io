@@ -686,7 +686,7 @@ async function showAllGeoZones(data_geozones = []) {
       polylinePoints.push(new L.LatLng(el[1], el[0]));
     }
 
-    var polygon = L.polygon(polylinePoints, { color: element.color })
+    var polygon = L.polygon(polylinePoints, { color: element.color }).bindPopup(element.name);
 
     polygons.push(polygon);
 

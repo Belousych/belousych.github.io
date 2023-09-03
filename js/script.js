@@ -796,10 +796,19 @@ async function showAllGeoZones(data_geozones = []) {
         }
         
 
-        if (!window.geoZone) {
+
+       
           var polygon = L.polygon(polylinePoints, {
             color: "red",
-          }).addTo(map);
+          })
+  
+  
+          
+        
+
+
+        if (!window.geoZone) {
+         polygon.addTo(map);
   
   
           

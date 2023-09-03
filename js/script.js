@@ -686,7 +686,7 @@ async function showAllGeoZones(data_geozones = []) {
       polylinePoints.push(new L.LatLng(el[1], el[0]));
     }
 
-    var polygon = L.polygon(polylinePoints, { color: element.color }).bindPopup(element.name);
+    var polygon = L.polygon(polylinePoints, { color: element.color, uid: element.uid }).bindPopup(element.name);
 
     polygons.push(polygon);
 
@@ -751,7 +751,7 @@ async function showAllGeoZones(data_geozones = []) {
       
       onPolygonReady: (polygon) => {
         
-  
+        
   
         
   
@@ -767,7 +767,10 @@ async function showAllGeoZones(data_geozones = []) {
 
         for (let index = 0; index < window.data_geozones.length; index++) {
           const element = window.data_geozones[index];
-          polygons.push(element.geometry.coordinates);
+          if (geoZone !== element.uid) {
+            polygons.push(element.geometry.coordinates);
+          }
+          
         }
   
         const turfMultiPolygons = turf.multiPolygon(polygons);
@@ -775,8 +778,10 @@ async function showAllGeoZones(data_geozones = []) {
         const diff = turf.difference(turfPolygon, turfMultiPolygons);
   
         
-  
-        areaSelection.deactivate();
+        if(!window.geoZone) {
+          areaSelection.deactivate();
+        }
+        
 
         
   
@@ -789,13 +794,22 @@ async function showAllGeoZones(data_geozones = []) {
           var el = coordinates[0][i];
           polylinePoints.push(new L.LatLng(el[1], el[0]));
         }
-  
-        var polygon = L.polygon(polylinePoints, {
-          color: "red",
-        }).addTo(map);
+        
 
+        if (!window.geoZone) {
+          var polygon = L.polygon(polylinePoints, {
+            color: "red",
+          }).addTo(map);
+  
+  
+          
+        }
 
         window.newGeozone = polygon
+        
+
+
+        
 
 
         safeButton.addTo(map)
@@ -816,20 +830,88 @@ async function showAllGeoZones(data_geozones = []) {
     window.areaSelection = areaSelection
   }
 
+
+
+
   
 }
 
-async function createNewGeoZones(options = {}) {
+// редактирование геозоны для этого они должны быть сначала показаны!!!
+async function editGeoZone(uid) {
+  window.geoZone = uid
+  if (window.data_geozones) {
+    
+
+    const brect = map.getContainer().getBoundingClientRect();
+    // const geozone = window.data_geozones.find((item) => item.uid === uid)
+    
+
+
+    const layers = myLayers.geozones.getLayers()
+    const currentZone = layers.find((item => item.options.uid === uid))
+    const currentZonePoints = currentZone.getLatLngs()[0]
+
+    console.log({ currentZonePoints })
+
+    const point = currentZonePoints[0];
+    
+    
+
+      const point_1 = map.latLngToContainerPoint([point.lat, point.lng]);
+
+      console.log({ point_1 })
+
+      
+map.fire("as:point-add",
+  new MouseEvent("click", {
+    clientX: point_1.x + brect.left,
+    clientY: point_1.y + brect.top
+  }))
+
+    for (let index = 1; index < currentZonePoints.length; index++) {
+      
+      const point = currentZonePoints[index];
+
+      const point_2 = map.latLngToContainerPoint([point.lat, point.lng]);
+
+      console.log({ point_2 }) 
+map.fire("as:point-add",
+  new MouseEvent("click", {
+    clientX: point_2.x + brect.left,
+    clientY: point_2.y + brect.top
+  })
+);
+      
+    }
+
+
+    
+    map.fire("as:point-add",
+      new MouseEvent("click", {
+        clientX: point_1.x + brect.left,
+        clientY: point_1.y + brect.top
+      }))
+
+        console.log({ point_1 })
+
+
+  }
+
+}
+
+// async function createNewGeoZones(options = {}) {
   
 
-  L.easyButton('<span class="btn-save-geo">✓</span>', function (btn, map) {
-    console.log("сохранить геозону");
-  }).addTo(map);
+//   L.easyButton('<span class="btn-save-geo">✓</span>', function (btn, map) {
+//     console.log("сохранить геозону");
+//     window.geoZone = null
+//   }).addTo(map);
 
-  L.easyButton('<span class="btn-cancel-geo">x</span>', function (btn, map) {
-    console.log("отменить геозону");
-  }).addTo(map);
-}
+//   L.easyButton('<span class="btn-cancel-geo">x</span>', function (btn, map) {
+//     console.log("отменить геозону");
+//     window.geoZone = null
+//   }).addTo(map);
+// }
 
 // --------------------
 
@@ -863,7 +945,10 @@ async function start() {
   RouteBuild(JSON.stringify(data_route0));
   RouteBuild(JSON.stringify(data_route1));
 
-  showAllGeoZones(data_geozones);
+  await showAllGeoZones(data_geozones);
+
+
+  editGeoZone('9712e912-d0b9-11e1-b37b-005056848888')
   console.timeEnd("FirstWay");
 }
 

@@ -722,10 +722,10 @@ async function showAllGeoZones(data_geozones = []) {
 
 
       if (window.newGeozone) {
-        
+        returnGeoZone()
         window.newGeozone = null
 
-        returnGeoZone()
+        
       }
     })
   

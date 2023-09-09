@@ -670,7 +670,8 @@ async function returnGeoZone() {
 
 // функция показать геозоны
 async function showAllGeoZones(data_geozones = []) {
-  isGeoZonesFlag = true
+  
+  setGeozoneFlag(true)
   let polygons = [];
 
   window.data_geozones = data_geozones;

@@ -6,6 +6,14 @@ let engines; // массив подложек
 
 let isCustomSequence = false;
 
+
+let isGeoZonesFlag = false
+
+
+let setGeozoneFlag = (value) => {
+  isGeoZonesFlag = Boolean(value)
+}
+
 let customSequenceMarkers = [];
 
 let markerList = [];
@@ -662,6 +670,7 @@ async function returnGeoZone() {
 
 // функция показать геозоны
 async function showAllGeoZones(data_geozones = []) {
+  isGeoZonesFlag = true
   let polygons = [];
 
   window.data_geozones = data_geozones;
@@ -847,6 +856,9 @@ async function showAllGeoZones(data_geozones = []) {
 
 // редактирование геозоны для этого они должны быть сначала показаны!!!
 async function editGeoZone(uid) {
+  if (!isGeoZonesFlag) {
+    return false
+  }
   window.geoZone = uid
   if (window.data_geozones) {
     

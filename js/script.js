@@ -932,13 +932,10 @@ async function showAllGeoZones(data_geozones = []) {
   
           
         
-
-
-        if (!window.geoZone) {
-         polygon.addTo(map);
-  
-  
           
+          
+        if (!window.geoZone) {
+         polygon.addTo(map); 
         }
 
         window.newGeozone = polygon
@@ -953,7 +950,7 @@ async function showAllGeoZones(data_geozones = []) {
       },
       onPolygonDblClick: (polygon, control, ev) => {},
       onButtonActivate: () => {
-        
+        window.geoZone = null
       },
       onButtonDeactivate: (polygon) => {
         

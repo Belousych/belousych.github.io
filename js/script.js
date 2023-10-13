@@ -169,6 +169,26 @@ function cleanLayersGroup(id) {
   layerControl.removeLayer(myLayers[id]);
 }
 
+
+function cleanPoints(id) {
+  if (id && myLayers.points && myLayers.points[id]) {
+    myLayers.points[id].clearLayers();
+    layerControl.removeLayer(myLayers.points[id]);
+    return
+  }
+
+  if (myLayers.points) {
+    const pointsIds = Object.values(myLayers.points)
+
+    pointsIds.forEach(item => {
+      item.clearLayers();
+      layerControl.removeLayer(item);
+    })
+  }
+
+
+}
+
 // рисуем кривую по геометрии в формате geoJSON
 // на основе функции "addPolylines"
 //координаты хранятся в data_in.routes[0].geometry.coordinates
@@ -518,6 +538,116 @@ function RouteBuild(data_in, parseNeed = true) {
   layerControl.addOverlay(myLayers[route.id], route.id);
 
   myLayers[route.id].addTo(map);
+}
+
+
+// рисуем points
+function renderPoints(points) {
+  const markers = L.markerClusterGroup();
+
+  const circleList = [];
+  const id = points.id;
+  myMarkers[id] = [];
+
+  const color = points.color || "red";
+
+
+  var divIconGhost = L.divIcon({
+    className: "my-div-icon",
+    iconSize: 25,
+    html: `<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+  });
+
+
+  points.points.forEach((item, index) => {
+    const coord = [];
+    coord.push(item.ltd, item.lng);
+
+    var myIcon = L.divIcon({
+      className: `my-div-icon my-div-icon_${id}`,
+      iconSize: 50,
+      color: color,
+      
+      html: `<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="7" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+    });
+
+    let markerOptions = {
+      icon: myIcon,
+      title: item.textHover,
+      id: item.id,
+      route_id: id,
+      
+    };
+
+    let marker = L.marker(coord, markerOptions).bindPopup(
+      `
+      ${
+        Boolean(item.textPopup.partner)
+          ? `<div><b>Контрагент:</b>${item.textPopup.partner}</div>`
+          : ""
+      }
+      ${
+        Boolean(item.textPopup.weight)
+          ? `<div><b>Вес:</b>${item.textPopup.weight}</div>`
+          : ""
+      }
+      ${
+        Boolean(item.textPopup.volume)
+          ? `<div><b>Объем:</b>${item.textPopup.volume}</div>`
+          : ""
+      }
+      ${
+        Boolean(item.textPopup.address)
+          ? `<div><b>Адрес:</b>${item.textPopup.address}</div>`
+          : ""
+      }
+      ${
+        Boolean(item.textPopup.date)
+          ? `<div><b>Интервал доставки:</b>${item.textPopup.date}</div>`
+          : ""
+      }
+      ${
+        Boolean(item.textPopup.comment)
+          ? `<div><b>Комментарий:</b>${item.textPopup.comment}</div>`
+          : ""
+      }
+      `,
+      {
+        offset: [0, -20],
+      }
+    );
+
+    var circle = L.circleMarker(coord, {
+      ...markerOptions,
+      color: color,
+      icon: divIconGhost,
+      opacity: 0.25,
+      // pane: "markers",
+    });
+
+    circleList.push(circle);
+
+    markerList.push(marker);
+    myMarkers[id].push(marker);
+    markers.addLayer(marker);
+  });
+  // markers.addLayer(polyline);
+
+  if (!myLayers.points) {
+    myLayers.points = {}
+  }
+  myLayers.points
+  myLayers.points[id] = L.layerGroup(
+    [markers, ...circleList],
+    {
+      color: color,
+    }
+  );
+
+
+  layerControl.addOverlay(myLayers.points[id], points.name);
+
+  myLayers.points[id].addTo(map);
 }
 
 //---------------------------------------------------------------------------
@@ -1066,7 +1196,11 @@ async function start() {
 
   const data2 = await loadJson("./data/next/2.json");
 
+
+  const points = await loadJson("./data/points.json");
+
   window.data2 = data2;
+  window.points = points;
 
   window.data_route1 = data_route1;
   window.data_geozones = data_geozones;
@@ -1086,6 +1220,12 @@ async function start() {
 
   editGeoZone('9712e912-d0b9-11e1-b37b-005056848888')
   console.timeEnd("FirstWay");
+
+
+  renderPoints(points)
+
+
+  
 }
 
 (function () {

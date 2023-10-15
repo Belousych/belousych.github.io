@@ -1031,8 +1031,12 @@ async function showAllGeoZones(data_geozones = []) {
         }
   
         const turfMultiPolygons = turf.multiPolygon(polygons);
+
+        
   
         const diff = turf.difference(turfPolygon, turfMultiPolygons);
+
+  
   
         
         if(!window.geoZone) {
@@ -1040,10 +1044,10 @@ async function showAllGeoZones(data_geozones = []) {
         }
         
 
+        if (diff) {
+          const coordinates = diff.geometry.coordinates;
         
-  
-        const coordinates = diff.geometry.coordinates;
-  
+        
         var polylinePoints = [];
   
         //треба поменять местами Долготу и Ширину
@@ -1055,10 +1059,13 @@ async function showAllGeoZones(data_geozones = []) {
 
 
        
-          var polygon = L.polygon(polylinePoints, {
-            color: "red",
-          })
+          var polygon = L.polygon(polylinePoints)
+        }
   
+        
+        polygon.setStyle({
+          color: "red",
+        });
   
           
         
@@ -1226,6 +1233,58 @@ async function start() {
 
 
   
+
+  const diff = turf.difference(turf.polygon([
+    [
+      [
+        68.818,
+        65.293
+      ],
+      [
+        95.713,
+        65.293
+      ],
+      [
+        95.713,
+        58.677
+      ],
+      [
+        68.818,
+        58.677
+      ],
+      [
+        68.818,
+        65.293
+      ]
+    ]
+  ])
+    , turf.multiPolygon([
+      [
+        [
+          [
+            68.818,
+            65.293
+          ],
+          [
+            95.713,
+            65.293
+          ],
+          [
+            95.713,
+            58.677
+          ],
+          [
+            68.818,
+            58.677
+          ],
+          [
+            68.818,
+            65.293
+      ]
+    ]]]));
+
+
+  console.log(diff)
 }
 
 (function () {

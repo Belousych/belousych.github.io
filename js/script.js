@@ -1106,6 +1106,69 @@ async function showAllGeoZones(data_geozones = []) {
   
 }
 
+
+// функция объединения геозон
+function combineGeoZones(geoZone1, geoZone2) {
+  const polygon1 = turf.polygon(geoZone1.geometry.coordinates);
+  const polygon2 = turf.polygon(geoZone2.geometry.coordinates);
+
+
+  const unionZone = turf.union(polygon1, polygon2);
+  var result = null
+
+
+  if (unionZone.geometry.type === "MultiPolygon") {
+    console.info('Полигоны не смежные')
+    return false
+  }
+
+  if (unionZone.geometry.type === "Polygon") {
+    result = geozoneToPolygon(unionZone)
+    console.log({result})
+  }
+
+  // result.polygon.setStyle({
+  //   color: "red",
+  // })
+
+  // result.polyline.setStyle({
+  //   color: "blue",
+  // })
+
+
+  // result.polygon.addTo(map)
+  // result.polyline.addTo(map)
+  // result объект { polygon, polyline } леафлетовские берешь и рисуешь на карте линию обводку и полигон
+  return result
+
+  
+  
+  
+}
+
+//функция преобразования геозоны в полигон леафлет
+function geozoneToPolygon(geoZone) {
+  const element = geoZone;
+  const coordinates =
+    !!element && !!element.geometry && element.geometry.coordinates;
+
+  var polylinePoints = [];
+
+  //треба поменять местами Долготу и Ширину
+  for (let i = 0; i < coordinates[0].length; i++) {
+    var el = coordinates[0][i];
+    polylinePoints.push(new L.LatLng(el[1], el[0]));
+  }
+
+  var polygon = L.polygon(polylinePoints, { color: element.color, uid: element.uid }).bindPopup(element.name);
+
+  
+
+  var polyline = L.polyline(polylinePoints, { color: element.color, uid: element.uid }).bindPopup(element.name);
+
+  return { polygon, polyline}
+}
+
 // редактирование геозоны для этого они должны быть сначала показаны!!!
 async function editGeoZone(uid) {
   if (!isGeoZonesFlag) {
@@ -1234,57 +1297,9 @@ async function start() {
 
   
 
-  const diff = turf.difference(turf.polygon([
-    [
-      [
-        68.818,
-        65.293
-      ],
-      [
-        95.713,
-        65.293
-      ],
-      [
-        95.713,
-        58.677
-      ],
-      [
-        68.818,
-        58.677
-      ],
-      [
-        68.818,
-        65.293
-      ]
-    ]
-  ])
-    , turf.multiPolygon([
-      [
-        [
-          [
-            68.818,
-            65.293
-          ],
-          [
-            95.713,
-            65.293
-          ],
-          [
-            95.713,
-            58.677
-          ],
-          [
-            68.818,
-            58.677
-          ],
-          [
-            68.818,
-            65.293
-      ]
-    ]]]));
+ 
 
 
-  console.log(diff)
 }
 
 (function () {

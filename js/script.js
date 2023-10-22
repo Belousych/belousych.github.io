@@ -938,8 +938,8 @@ async function showAllGeoZones(data_geozones = []) {
     var polylinePoints = [];
 
     //треба поменять местами Долготу и Ширину
-    for (let i = 0; i < coordinates[0].length; i++) {
-      var el = coordinates[0][i];
+    for (let i = 0; i < coordinates.length; i++) {
+      var el = coordinates[i];
       polylinePoints.push(new L.LatLng(el[1], el[0]));
     }
 
@@ -1025,7 +1025,7 @@ async function showAllGeoZones(data_geozones = []) {
         for (let index = 0; index < window.data_geozones.length; index++) {
           const element = window.data_geozones[index];
           if (geoZone !== element.uid) {
-            polygons.push(element.geometry.coordinates);
+            polygons.push([element.geometry.coordinates]);
           }
           
         }
@@ -1108,40 +1108,54 @@ async function showAllGeoZones(data_geozones = []) {
 
 
 // функция объединения геозон
-function combineGeoZones(geoZone1, geoZone2) {
-  const polygon1 = turf.polygon(geoZone1.geometry.coordinates);
-  const polygon2 = turf.polygon(geoZone2.geometry.coordinates);
-
-
-  const unionZone = turf.union(polygon1, polygon2);
-  var result = null
-
-
-  if (unionZone.geometry.type === "MultiPolygon") {
-    console.info('Полигоны не смежные')
-    return false
+function combineGeoZones(geozonesArray = []) {
+  var polygons = []
+  for (let index = 0; index < geozonesArray.length; index++) {
+    const element = geozonesArray[index];
+    polygons.push(turf.polygon([element.geometry.coordinates]));
+    
   }
 
-  if (unionZone.geometry.type === "Polygon") {
-    result = geozoneToPolygon(unionZone)
-    console.log({result})
+  console.log({ polygons })
+
+  var union = polygons[0];
+  for (let i=1; i<polygons.length; i++) {
+    union = turf.union(union, polygons[i]);
   }
 
-  // result.polygon.setStyle({
-  //   color: "red",
-  // })
-
-  // result.polyline.setStyle({
-  //   color: "blue",
-  // })
-
-
-  // result.polygon.addTo(map)
-  // result.polyline.addTo(map)
-  // result объект { polygon, polyline } леафлетовские берешь и рисуешь на карте линию обводку и полигон
-  return result
 
   
+
+  // new Feature collection with unioned features
+  // var fc2 = {
+  //   "type": "FeatureCollection",
+  //   "features": [union] // note features has to be an array
+  // }
+
+  // // add to map
+  // L.geoJson(fc2).addTo(map);
+
+
+  
+    var result = {
+      zone: union,
+      line: turf.polygonToLine(union)
+    }
+
+    console.log(result)
+
+    L.geoJson(union, {
+      style: {
+        color: "red"
+      }
+    }).addTo(map);
+    L.geoJson(result.line, {
+      style: {
+        color: "red"
+      }
+    }).addTo(map);
+
+
   
   
 }
@@ -1288,7 +1302,7 @@ async function start() {
   await showAllGeoZones(data_geozones);
 
 
-  editGeoZone('9712e912-d0b9-11e1-b37b-005056848888')
+  // editGeoZone('9712e912-d0b9-11e1-b37b-005056848888')
   console.timeEnd("FirstWay");
 
 

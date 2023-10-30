@@ -29,14 +29,18 @@ function calculateCounter () {
   console.log({ selectedMarkers, markerList })
   var clientCount = selectedMarkers.length;
   var pointCount = selectedMarkers.length;
-  var partner = selectedMarkers.length;
+  var partners = [];
   var weightSum = 0
   var volumeSum = 0
   
   for (let index = 0; index < selectedMarkers.length; index++) {
     const markerId = selectedMarkers[index];
     const marker = markerList.find((item) => item.options.id === markerId);
+    const partner = marker.options.item.textPopup.partner;
 
+    if (!partners.includes(partner)) {
+      partners.push(partner);
+    }
     console.log({ marker })
     weightSum += marker.options.item.textPopup.weight
     volumeSum += marker.options.item.textPopup.volume
@@ -44,8 +48,8 @@ function calculateCounter () {
   }
 
 
-  console.log({ clientCount, pointCount, partner, weightSum, volumeSum })
-  counterDiv.innerHTML = `Клиентов: ${clientCount}; Точек: ${pointCount}; Партнеров: ${partner}; Вес: ${weightSum}; Объем: ${volumeSum}`
+  
+  counterDiv.innerHTML = `Клиентов: ${clientCount}; Точек: ${pointCount}; Партнеров: ${partners.length}; Вес: ${weightSum}; Объем: ${volumeSum}`
 
 
 }
@@ -93,6 +97,7 @@ const clearActiveMarkers = () => {
     setMarkerUnActive(marker);
   });
   selectedMarkers = [];
+  calculateCounter()
 };
 
 function CreatePolyline(options) {
@@ -189,6 +194,8 @@ const setMarkerUnActive = (marker) => {
       (item) => item.options.id !== marker.options.id
     );
   }
+
+  calculateCounter();
 
   setTimeout(() => {
     marker.setIcon(myIcon);
@@ -833,6 +840,7 @@ function returnMarkers() {
 
 function clearMarkers() {
   selectedMarkers = [];
+  calculateCounter();
 }
 
 //  ищем маркер на маршруте и ставим в центр карты и открыаем его попап

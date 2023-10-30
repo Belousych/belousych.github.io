@@ -9,6 +9,47 @@ let isCustomSequence = false;
 
 let isGeoZonesFlag = false
 
+var isShowCounter = true
+
+
+function showCounter () {
+  const counter = document.getElementById("counter")
+  counter.classList.remove("hidden")
+  isShowCounter = true
+}
+
+function hideCounter () {
+  const counter = document.getElementById("counter")
+  counter.classList.add("hidden")
+  isShowCounter = false
+}
+
+function calculateCounter () {
+  const counterDiv = document.getElementById("counter")
+  console.log({ selectedMarkers, markerList })
+  var clientCount = selectedMarkers.length;
+  var pointCount = selectedMarkers.length;
+  var partner = selectedMarkers.length;
+  var weightSum = 0
+  var volumeSum = 0
+  
+  for (let index = 0; index < selectedMarkers.length; index++) {
+    const markerId = selectedMarkers[index];
+    const marker = markerList.find((item) => item.options.id === markerId);
+
+    console.log({ marker })
+    weightSum += marker.options.item.textPopup.weight
+    volumeSum += marker.options.item.textPopup.volume
+    
+  }
+
+
+  console.log({ clientCount, pointCount, partner, weightSum, volumeSum })
+  counterDiv.innerHTML = `Клиентов: ${clientCount}; Точек: ${pointCount}; Партнеров: ${partner}; Вес: ${weightSum}; Объем: ${volumeSum}`
+
+
+}
+
 
 let setGeozoneFlag = (value) => {
   isGeoZonesFlag = Boolean(value)
@@ -406,6 +447,7 @@ function RouteBuild(data_in, parseNeed = true) {
     let markerOptions = {
       icon: myIcon,
       title: item.textHover,
+      item: item,
       id: item.id,
       route_id: route.id,
       // pane: "markers"
@@ -469,6 +511,7 @@ function RouteBuild(data_in, parseNeed = true) {
     const marker = e.sourceTarget;
     // console.log(setMarkerActive)
 
+
     if (!isCustomSequence) {
       // TODO нужно уточнение всегда ли сбрасываем все активные маркеры?
       allMarkerUnactive();
@@ -485,6 +528,10 @@ function RouteBuild(data_in, parseNeed = true) {
     if (isCustomSequence) {
       drawPolyline(route.id, polyline, decorator);
     }
+
+
+    calculateCounter();
+    
   });
 
   myLayers[route.id] = L.layerGroup(
@@ -1272,6 +1319,7 @@ async function loadJson(url) {
 }
 
 async function start() {
+  showCounter();
   const dataInit = await loadJson("./data/json_0.json");
 
   const data_route0 = await loadJson("./data/route/json_0.json");

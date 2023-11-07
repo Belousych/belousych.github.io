@@ -118,6 +118,8 @@ const setMarkerActive = (marker) => {
 
   selectedMarkers.push(marker.options.id);
 
+  
+
   var number = isCustomSequence
     ? selectedMarkers.length
     : marker.options.icon.options.number;
@@ -153,6 +155,8 @@ const setMarkerActive = (marker) => {
   if (isCustomSequence) {
     customSequenceMarkers.push(marker);
   }
+
+  calculateCounter()
 
   setTimeout(() => {
     marker.setIcon(myIcon);
@@ -777,6 +781,9 @@ function allMarkerUnactive() {
   markerList.forEach(function (marker, index, array) {
     setMarkerUnActive(marker);
   });
+
+
+  calculateCounter();
 }
 
 function createMap() {

@@ -1238,6 +1238,16 @@ function geozoneToPolygon(geoZone) {
   return { polygon, polyline}
 }
 
+
+function flyToBoundsGeozone(uid) {
+  const layers = myLayers.geozones.getLayers()
+  const currentZone = layers.find((item => item.options.uid === uid))
+
+  if (currentZone) {
+    map.flyToBounds(currentZone.getBounds())
+  }
+}
+
 // редактирование геозоны для этого они должны быть сначала показаны!!!
 async function editGeoZone(uid) {
   if (!isGeoZonesFlag) {

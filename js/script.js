@@ -1169,6 +1169,14 @@ async function showAllGeoZones(data_geozones = []) {
 }
 
 
+// функция скрыть все геозоны
+function removeAllGeoZones() {
+  if (myLayers.geozones) {
+    myLayers.geozones.remove()
+  }  
+}
+
+
 // функция объединения геозон
 function combineGeoZones(geozonesArray = []) {
   var polygons = []

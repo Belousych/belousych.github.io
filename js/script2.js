@@ -790,6 +790,7 @@ function createMap() {
   map = L.map("map", {
     boxZoom: false, //-- отключить выделение кнопкой SHIFT
     selectArea: true, //-- запускаем библиотеку выбор маркетор
+    minZoom: 15 // минимальное приближение дальше не отдалить
   });
 
   map._layersMaxZoom = 19;

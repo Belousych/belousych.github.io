@@ -253,6 +253,8 @@ function RouteBuild(data_in, parseNeed = true) {
 
   const markers = L.markerClusterGroup(); //https://github.com/Leaflet/Leaflet.markercluster
 
+  var coverages = new L.LayerGroup();  // https://jsfiddle.net/mad__97/3v7hd2vx/211/
+
   const circleList = [];
   const route = data_in.route;
   const road = data_in.road;
@@ -502,15 +504,15 @@ function RouteBuild(data_in, parseNeed = true) {
       }
     );
 
-    var circle = L.circleMarker(coord, {
-      ...markerOptions,
-      color: color,
-      icon: divIconGhost,
-      opacity: 0.25,
-      pane: "markers",
-    });
+    // var circle = L.circleMarker(coord, {
+    //   ...markerOptions,
+    //   color: color,
+    //   icon: divIconGhost,
+    //   opacity: 0.25,
+    //   pane: "markers",
+    // });
 
-    circleList.push(circle);
+    // circleList.push(circle);
 
     markerList.push(marker);
     myMarkers[route.id].push(marker);
@@ -543,6 +545,43 @@ function RouteBuild(data_in, parseNeed = true) {
 
     calculateCounter();
     
+  });
+
+  markers.on("animationend", function() {
+    // Here getting clusters randomly, but you can decide which one you want to show coverage of.
+  
+  
+    coverages.clearLayers();
+  
+    markers._featureGroup.eachLayer(function(layer) {
+      if (layer instanceof L.MarkerCluster && layer.getChildCount() > 2) {
+        //mcg._showCoverage({ layer: layer });
+        
+
+        const childCount = layer.getChildCount();
+
+        var opacity = childCount / 80 || 0.2;
+
+        if (opacity > 0.8) {
+          opacity = 0.8
+        }
+
+        if (opacity < 0.2) {
+          opacity = 0.2
+        }
+
+
+
+        console.log(layer);
+        console.log(layer.getConvexHull());
+        console.log(layer.getChildCount());
+        coverages.addLayer(L.polygon(layer.getConvexHull(), {
+          fillOpacity: opacity
+        }));
+  
+      }
+      coverages.addTo(map);
+    });
   });
 
   myLayers[route.id] = L.layerGroup(
@@ -790,7 +829,7 @@ function createMap() {
   map = L.map("map", {
     boxZoom: false, //-- отключить выделение кнопкой SHIFT
     selectArea: true, //-- запускаем библиотеку выбор маркетор
-    minZoom: 15 // минимальное приближение дальше не отдалить
+    // minZoom: 19 // минимальное приближение дальше не отдалить
   });
 
   map._layersMaxZoom = 19;

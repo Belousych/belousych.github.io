@@ -1,5 +1,7 @@
 var gulp = require('gulp');
 var inlinesource = require('gulp-inline-source');
+var rename = require('gulp-rename');
+
  
 gulp.task('inlinesource', function () {
     var options = {
@@ -8,5 +10,6 @@ gulp.task('inlinesource', function () {
     };
     return gulp.src('./index.html')
         .pipe(inlinesource(options))
-        .pipe(gulp.dest('./out'));
+        .pipe(rename('indexNew.html'))
+        .pipe(gulp.dest('.'));
 });

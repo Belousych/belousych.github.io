@@ -2,7 +2,7 @@
   "browserslist": "Firefox > 20",
   "dependencies": {
     "@bopen/leaflet-area-selection": "^0.7.0",
-    "inline-source-cli": "^2.0.0",
+    "gulp-rename": "^2.0.0",
     "leaflet-area-select": "^1.0.5",
     "leaflet-easybutton": "^2.4.0",
     "leaflet-polylinedecorator": "^1.6.0",
@@ -10,9 +10,7 @@
     "leaflet.motion": "^0.3.2"
   },
   "devDependencies": {
-    "@11ty/eleventy": "^2.0.1",
     "gulp": "^4.0.2",
-    "gulp-inline-source": "^4.0.0",
-    "parcel": "^2.11.0"
+    "gulp-inline-source": "^4.0.0"
   }
 }

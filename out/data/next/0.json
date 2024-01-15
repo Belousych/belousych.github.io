@@ -1,0 +1,21 @@
+{
+  "map": "http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}", 
+  "lat": 54.831273,
+  "lng": 56.106995,
+  "description": "ЦентральныйОбъект.АдресСтрокой",
+  "comment": "Склад готовой продукции",
+  "engines": [ 
+    {
+      "name": "2GIS",
+      "link": "http://tile2.maps.2gis.com/tiles?x={x}&y={y}&z={z}"
+    },
+    {
+      "name": "GoogleMap",
+      "link": "http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}"
+    },
+    {
+      "name": "OSRM",
+      "link": "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
+    }
+  ]
+}

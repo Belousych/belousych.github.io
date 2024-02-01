@@ -549,11 +549,12 @@ function RouteBuild(data_in, parseNeed = true) {
 
   markers.on("animationend", function() {
     // Here getting clusters randomly, but you can decide which one you want to show coverage of.
-  
+    
   
     coverages.clearLayers();
   
     markers._featureGroup.eachLayer(function(layer) {
+      console.log({ layer })
       if (layer instanceof L.MarkerCluster && layer.getChildCount() > 2) {
         //mcg._showCoverage({ layer: layer });
         
@@ -572,9 +573,9 @@ function RouteBuild(data_in, parseNeed = true) {
 
 
 
-        console.log(layer);
-        console.log(layer.getConvexHull());
-        console.log(layer.getChildCount());
+        // console.log(layer);
+        // console.log(layer.getConvexHull());
+        // console.log(layer.getChildCount());
         coverages.addLayer(L.polygon(layer.getConvexHull(), {
           fillOpacity: opacity
         }));
@@ -585,7 +586,7 @@ function RouteBuild(data_in, parseNeed = true) {
   });
 
   myLayers[route.id] = L.layerGroup(
-    [polyline, decorator, markers, ...circleList],
+    [polyline, decorator, markers, ...circleList, coverages],
     {
       color: color,
     }

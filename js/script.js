@@ -49,7 +49,7 @@ function calculateCounter () {
 
 
   
-  counterDiv.innerHTML = `Клиентов: ${clientCount}; Точек: ${pointCount}; Партнеров: ${partners.length}; Вес: ${weightSum}; Объем: ${volumeSum}`
+  counterDiv.innerHTML = `Клиентов:&nbsp;${clientCount}; Точек:&nbsp;${pointCount}; Партнеров:&nbsp;${partners.length}; Вес:&nbsp;${weightSum}; Объем:&nbsp;${volumeSum}`
 
 
 }

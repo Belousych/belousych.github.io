@@ -748,6 +748,11 @@ function renderPoints(points) {
   myLayers.points[id].addTo(map);
 }
 
+
+
+
+
+
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
@@ -1387,6 +1392,30 @@ map.fire("as:point-add",
 //   }).addTo(map);
 // }
 
+
+
+// проверяем входит ли точка в полигон
+// Функция для преобразования массива точек в GeoJSON FeatureCollection
+function pointsToFeatureCollection(points) {
+  const features = points.map(point => {
+      return turf.point(point.coordinates, { uid: point.uid });
+  });
+  return turf.featureCollection(features);
+}
+
+// Функция для преобразования полигона в GeoJSON Feature
+function polygonToFeature(polygon) {
+  return turf.polygon([polygon.geometry.coordinates]);
+}
+
+// Функция для определения точек, находящихся внутри полигона
+function pointsInsidePolygon(points, polygon) {
+  const pointsFC = pointsToFeatureCollection(points);
+  const polygonFeature = polygonToFeature(polygon[0]); // в примере один полигон а не массив
+  const pointsInside = turf.pointsWithinPolygon(pointsFC, polygonFeature);
+  return pointsInside.features.map(feature => feature.properties.uid);
+}
+
 // --------------------
 
 async function loadJson(url) {
@@ -1407,6 +1436,14 @@ async function start() {
 
 
   const points = await loadJson("./data/points.json");
+
+
+  const pointsExample = await loadJson("./data/checkPointsIntoPolygon/points.json");
+  const polygonExample = await loadJson("./data/checkPointsIntoPolygon/polygon.json");
+
+  const result = pointsInsidePolygon(pointsExample, polygonExample);
+
+  console.log({ result })
 
   window.data2 = data2;
   window.points = points;

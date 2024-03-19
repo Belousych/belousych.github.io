@@ -58,12 +58,16 @@
 
 .my-div-icon_inner_number,
 .my-div-icon_inner_number-route {
-  font-size: 13px;
-  color: black;
+  font-size: 12px;
+  line-height: 10px;
+  color: white;
+
+  /* mix-blend-mode: difference; */
   position: absolute;
+  text-shadow: 1px 1px 0px #000, -1px -1px 0px #000;
   left: 0;
   right: 0;
-  top: 10px;
+  top: 5px;
   text-align: center;
 }
 

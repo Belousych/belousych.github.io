@@ -139,7 +139,7 @@ const setMarkerActive = (marker) => {
 
   const myIcon = L.divIcon({
     className: `my-div-icon my-div-icon_active`,
-    iconSize: 25,
+    iconSize: 35,
     color: color,
     number: number,
     numberRoute: numberRoute,
@@ -149,7 +149,7 @@ const setMarkerActive = (marker) => {
         : ""
     }<span class="my-div-icon_inner_number">${
       Boolean(number) ? number : ""
-    }</span><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="0" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+    }</span><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="10" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
   });
 
   if (isCustomSequence) {
@@ -176,7 +176,7 @@ const setMarkerUnActive = (marker) => {
 
   const myIcon = L.divIcon({
     className: `my-div-icon`,
-    iconSize: 25,
+    iconSize: 35,
     color: color,
     number: number,
     numberRoute: numberRoute,
@@ -186,7 +186,7 @@ const setMarkerUnActive = (marker) => {
         : ""
     }<span class="my-div-icon_inner_number">${
       Boolean(number) ? number : ""
-    }</span><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="0" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+    }</span><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="10" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
   });
 
   selectedMarkers = selectedMarkers.filter(
@@ -274,8 +274,8 @@ function RouteBuild(data_in, parseNeed = true) {
 
   var divIconGhost = L.divIcon({
     className: "my-div-icon",
-    iconSize: 25,
-    html: `<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="0" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+    iconSize: 35,
+    html: `<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="10" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
   });
 
   let polylinePoints = [];
@@ -444,7 +444,7 @@ function RouteBuild(data_in, parseNeed = true) {
 
     var myIcon = L.divIcon({
       className: `my-div-icon my-div-icon_${route.id}`,
-      iconSize: 25,
+      iconSize: 35,
       color: color,
       number: item.number,
       numberRoute: item.numberRoute,
@@ -454,7 +454,7 @@ function RouteBuild(data_in, parseNeed = true) {
           : ""
       }<span class="my-div-icon_inner_number">${
         Boolean(item.number) ? item.number : ""
-      }</span><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="0" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+      }</span><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="10" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
     });
 
     let markerOptions = {
@@ -652,8 +652,8 @@ function renderPoints(points) {
 
   var divIconGhost = L.divIcon({
     className: "my-div-icon",
-    iconSize: 25,
-    html: `<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="0" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+    iconSize: 35,
+    html: `<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="10" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
   });
 
 
@@ -663,10 +663,10 @@ function renderPoints(points) {
 
     var myIcon = L.divIcon({
       className: `my-div-icon my-div-icon_${id}`,
-      iconSize: 25,
+      iconSize: 35,
       color: color,
       
-      html: `<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="0" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+      html: `<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="10" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
     });
 
     let markerOptions = {
@@ -759,16 +759,16 @@ function renderPoints(points) {
 
 var myIcon = L.divIcon({
   className: "my-div-icon",
-  iconSize: 25,
-  html: '<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="#3276c3" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="0" fill="#fff" fill-rule="nonzero"/></g></svg></div>',
+  iconSize: 35,
+  html: '<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="#3276c3" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="10" fill="#fff" fill-rule="nonzero"/></g></svg></div>',
 });
 
 var myIconDefault = myIcon;
 
 var myIconActive = L.divIcon({
   className: "my-div-icon my-div-icon_active",
-  iconSize: 25,
-  html: '<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="#3276c3" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="0" fill="#fff" fill-rule="nonzero"/></g></svg></div>',
+  iconSize: 35,
+  html: '<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="#3276c3" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="10" fill="#fff" fill-rule="nonzero"/></g></svg></div>',
 });
 
 var myIconStock = L.icon({
@@ -944,9 +944,9 @@ async function customSequence(data_in, parseNeed = true) {
 
   const myIcon = L.divIcon({
     className: `my-div-icon my-div-icon_${id}`,
-    iconSize: 25,
+    iconSize: 35,
     color: color,
-    html: `<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="0" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+    html: `<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="10" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
   });
 
   L.Util.requestAnimFrame(function () {
@@ -978,7 +978,7 @@ async function drawPolyline(routeId, polyline, decorator) {
 
     const myIcon = L.divIcon({
       className: `my-div-icon my-div-icon_active`,
-      iconSize: 25,
+      iconSize: 35,
       color: color,
       number: number,
       numberRoute: numberRoute,
@@ -988,7 +988,7 @@ async function drawPolyline(routeId, polyline, decorator) {
           : ""
       }<span class="my-div-icon_inner_number">${
         Boolean(number) ? number : ""
-      }</span><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="0" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+      }</span><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="10" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
     });
 
     setTimeout(() => {

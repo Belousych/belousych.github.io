@@ -129,6 +129,26 @@ function createMap() {
   map.getPane("markers").style.zIndex = 400;
 
   areaSelectionZone = areaSelection;
+
+
+
+  map.on('overlayadd overlayremove', function (eventLayer) {
+    Object.keys(myLayers).forEach(function(uid) {
+      
+      
+        // Основной маршрут включен/отключен
+        if (map.hasLayer(myLayers[uid])) {
+          // Если включен основной маршрут, проверяем, включена ли полилиния, если нет - добавляем
+          // if (!map.hasLayer(myLayers[uid].polylines)) {
+          //   myLayers[uid].polylines.addTo(map);
+          // }
+        } else {
+          // Если основной маршрут отключен, отключаем полилинию
+          map.removeLayer(myLayers[uid].polylines);
+        }
+      
+    });
+  });
 }
 
 function init(data1c) {

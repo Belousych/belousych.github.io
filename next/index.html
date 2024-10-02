@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Карта GTRoute (версия 1.2)</title>
+  
+    <meta http-equiv="X-UA-Compatible" content="IE=EDGE">   
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <link rel="stylesheet" href="./js/leaflet/dist/leaflet.css"/>
+    <script src="./js/leaflet/dist/leaflet.js"></script>
+
+    <link rel="stylesheet" href="./js/leaflet.markercluster/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="./js/leaflet.markercluster/dist/MarkerCluster.Default.css">
+    <script src="./js/leaflet.markercluster/dist/leaflet.markercluster.js" crossorigin=""></script>  
+
+    <script src="./js/leaflet-area-select/dist/Map.SelectArea.min.js" crossorigin=""></script>
+
+    <script src="./js/stats.min.js" crossorigin=""></script>
+
+    <script src="./js/leaflet-easybutton/src/easy-button.js"></script>
+    <link rel="stylesheet" href="./js/leaflet-easybutton/src/easy-button.css">
+
+    <link rel="stylesheet" href="./js/@bopen/leaflet-area-selection/dist/index.css">
+    <script src="./js/@bopen/leaflet-area-selection/dist/index.umd.js"></script>
+
+    <script src="./js/leaflet-polylinedecorator/dist/leaflet.polylineDecorator.js"></script>
+    <script src="./js/leaflet.motion/dist/leaflet.motion.min.js"></script>
+
+    <script src="./js/turf.min.js"></script>
+
+    <script src='./js/polyline.js'></script>
+
+    <script src="./js/leaflet-ant-path/leaflet-ant-path.js"></script>
+
+    <script type="application/javascript" src="./js/console-log-html.min.js"></script>
+
+    <script type="application/javascript" src="./js/tinycolor.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>  
+</head>
+    <body> 
+        <div id="map" class="map"></div>
+        <div id="counter" class="counter hidden"></div>
+        
+        <ul id="log" class="log hidden"></ul>
+
+        <ul id="counterMarkers" class="counterMarkers hidden"></ul>
+
+        <link rel="stylesheet" href="./css/styles.css"> 
+        <script src="./js/scripts.js"></script> 
+
+        <script type="text/javascript">
+            map.on('moveend', 
+              function() {
+                map.eachLayer(function(layer) {  
+                  if (layer instanceof L.MarkerClusterGroup) {
+                    layer.refreshClusters();  
+
+                    /*layer._getExpandedVisibleBounds = function () {
+                        return layer._map.getBounds();
+                    };*/  
+                  }
+                }); 
+              }
+            );
+
+            //------------------------------------------------------------------------------------------
+            //-- Кастомная последовательность
+            //------------------------------------------------------------------------------------------
+
+            async function loadJson(url) {
+                let res = false;
+
+                 //console.log(url);
+
+                try {
+                    await $.getJSON(url, function(data) {
+                        res = data;         
+                    });
+                } catch (error) {
+                    //console.log(error);
+                }
+
+                return res;
+            }
+
+            async function customSequence(data_in, parseNeed = true) { 
+ 
+              isCustomSequence = true;
+             
+              if (parseNeed) {
+                data_in = JSON.parse(data_in);
+              }
+
+              resetMap();
+              clearMarkers();
+
+              const id = data_in.route && data_in.route.id;
+              
+              map.addLayer(baseMaps["GoogleMap"]);
+
+              addMarker([data.lat, data.lng], myIconStock, data.comment); 
+              
+              if (myLayers[id]) {
+                map.addLayer(myLayers[id]);
+              } else { 
+                RouteBuild(data_in, false);
+              }
+
+              const color = myLayers[id].options.color;
+              
+              const myIcon = L.divIcon({
+                className: `my-div-icon my-div-icon_${id}`,
+                iconSize: 35,
+                color: color,
+                html: `<div class="my-div-icon_inner"><svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="-4 0 36 36"><g fill="none" fill-rule="evenodd"><path fill="${color}" d="M14 0c7.732 0 14 5.641 14 12.6C28 23.963 14 36 14 36S0 24.064 0 12.6C0 5.641 6.268 0 14 0Z"/><circle cx="14" cy="14" r="10" fill="#fff" fill-rule="nonzero"/></g></svg></div>`,
+              });
+
+              L.Util.requestAnimFrame(function () {
+                myMarkers[id].forEach(function (marker, index, array) {
+                  marker.setIcon(myIcon);
+                });
+              });
+            }
+
+            async function drawPolyline(routeId, polyline, decorator) {
+                let req = [];
+                req.push(`${data.lng},${data.lat}`);
+
+                /*const customSequenceMarkers = customSequenceMarkers.filter((value, index, self) => {
+                  return self.indexOf(value) === index;
+                });*/
+
+                //console.log("selectedMarkers" + " " + customSequenceMarkers.length);
+
+                for (let index = 0; index < customSequenceMarkers.length; index++) {
+                    const marker = customSequenceMarkers[index];
+
+                    const uniqueSelectedMarker = Array.from(new Set(selectedMarkers));
+
+                    if (uniqueSelectedMarker.indexOf(marker.options.id) + 1) {
+                        number = uniqueSelectedMarker.indexOf(marker.options.id) + 1;
+                        numberRoute = uniqueSelectedMarker.indexOf(marker.options.id) + 1;
+                      }
+                      
+                    const color = marker.options.icon.options.color;
+
+                    const mapMarker = generateSVGMarker(color, numberRoute, number);
+
+                    const myIcon = L.divIcon({
+                      className: `my-div-icon my-div-icon_active`,
+                      iconSize: 35,
+                      color: color,
+                      number: number,
+                      numberRoute: numberRoute,
+                      html: mapMarker,
+                    });
+
+                    marker.setIcon(myIcon);
+
+                    req.push(`${marker.getLatLng().lng},${marker.getLatLng().lat}`);
+                }
+
+                //-- DEV 20230908 этот урл с параметрами мы должны получать из роута
+                const url = `https://osrm.gt-logistics.su/route/v1/driving/${req.join(';')}?overview=full&alternatives=false&steps=false&geometries=geojson`;
+
+                const res = await loadJson(url);
+                const route = res.routes[0];
+
+                let polylinePoints = [];
+                let arCoordinates = route.geometry.coordinates;
+
+                for (let i = 0; i < arCoordinates.length; i++) {
+                    polylinePoints.push(new L.LatLng(arCoordinates[i][1], arCoordinates[i][0]));
+                }
+
+                polyline.setLatLngs(polylinePoints);
+                polyline.redraw();
+                decorator.setPaths(polylinePoints);
+            }
+            
+            async function getDrivePolyline(lastPoint, newPoint) {
+                let req = [];
+
+                //console.log(lastPoint);
+
+                let latLngString = String(newPoint);
+                let [longitude, latitude] = latLngString.replace('LatLng(', '').replace(')', '').split(', ');
+                req.push(`${longitude},${latitude}`);
+
+                latLngString = String(lastPoint);
+                [longitude, latitude] = latLngString.replace('LatLng(', '').replace(')', '').split(', ');
+                req.push(`${longitude},${latitude}`);
+
+              console.log(JSON.stringify(req));
+
+                //-- DEV 20230908 этот урл с параметрами мы должны получать из роута
+                const url = `https://osrm.gt-logistics.su/route/v1/driving/${req.join(';')}?overview=full&alternatives=false&steps=false&geometries=geojson`;
+
+                const res = await loadJson(url);
+                const route = res.routes[0].geometry.coordinates;
+
+                try {
+                  // Выполнение запроса и получение данных маршрута
+                  const res = await loadJson(url);
+                  const route = res.routes[0].geometry.coordinates;
+
+                  let polylinePoints = [];
+
+                  for (let i = 0; i < route.length; i++) {
+                    polylinePoints.push(new L.LatLng(route[i][1], route[i][0]));
+                }
+
+                const polyline111 = new L.Polyline(route, {color:'black'});
+                polyline111.addTo(map);
+
+                  return route;
+                } catch (error) {
+                  // Обработка ошибок, возникших при выполнении запроса
+                  console.error('Ошибка при получении маршрута:', error);
+                  throw error;
+                }
+            }
+
+            //------------------------------------------------------------------------------------------
+            //-- Геозоны
+            //------------------------------------------------------------------------------------------
+            function setGeozoneFlag(value){
+              isGeoZonesFlag = Boolean(value);
+            }
+
+            function ClearGeoZone() {
+              data_newGeozone = null;
+            }
+
+          </script>
+    </body>    
+</html>

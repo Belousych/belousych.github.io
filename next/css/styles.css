@@ -1,0 +1,188 @@
+#map {
+    position: fixed;
+    inset: 0;
+    width: 99%;
+    height: 99%;
+}
+
+#log{
+    position: absolute;
+    background: lightgray;
+    bottom: 0;
+    width: 99%;
+    font-size: 10px;
+    position: absolute;
+    list-style: none;
+    height: auto;
+    min-height: 20px;
+}
+
+.my-icon-arrow {
+    z-index: 9;
+}
+
+.my-div-icon  {
+    z-index: 999;
+}
+
+.my-div-icon_active .my-div-icon_inner {
+
+}
+
+.my-div-icon_active .text {
+♦
+}
+
+/*my-div-icon_active svg path{
+    fill: red;
+}*/
+
+.my-div-icon_active .cls-1{
+    stroke: red;
+    stroke-width:2.2px;
+}
+
+.my-div-icon_inner {
+    position: relative;
+}
+
+.my-div-icon_inner_number-route {
+    visibility: hidden;
+    opacity: 0;
+    z-index: 555;
+}
+
+.show-numberRoute .my-div-icon_inner_number-route {
+    opacity: 1;
+    visibility: visible;
+    z-index: 555;
+}
+
+.show-numberRoute .my-div-icon_inner_number {
+    visibility: hidden;
+    opacity: 0;
+    z-index: 555;
+}
+
+.btn-toogle-number {
+    /*position: absolute;*/
+    /*inset: 0;*/
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    left: 7px;
+    top: 1px;
+}
+
+.show-numberRoute .easy-button-button .button-state {
+    position: static;
+}
+
+.show-numberRoute .btn-toogle-number {
+    background: rgba(0, 81, 255, 0.863);
+    color: white;
+    padding: 0;
+    margin: 0;
+    left: 7px;
+    top: 1px;
+    width: 100%;
+    height: 100%;
+}
+
+.my-div-icon_inner_number, .my-div-icon_inner_number-route {   
+    /*font-size: 12px;
+    font-weight: 700;
+    line-height: 12px;
+    color: black;
+    position: absolute;
+    text-align: center;*/
+    display: block;
+    width: 20px;
+    position: absolute;
+    text-align: center;
+    font-size: 9px;
+    font-weight: bold;
+    left: 1px;
+    right: 0;
+    top: 1px;
+    z-index: 555;
+}
+
+.leaflet-control-attribution.leaflet-control a{
+    display: none;
+}
+
+.hidden {
+  display: none;
+}
+
+.counter {
+    position: absolute;
+    left: 60px;
+    top: 0;
+    right: 60px;
+    min-height: 20px;
+    background: #fff;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 100;
+    padding: 5px;
+    text-align: center;
+    font-size: 14px;
+    font-family: Arial;
+}
+
+.counterMarkers {
+    position: absolute;
+    left: 60px;
+    top: 0;
+    right: 60px;
+    min-height: 20px;
+    background: #fff;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 100;
+    padding: 5px;
+    text-align: center;
+    font-size: 14px;
+    font-family: Arial;
+}
+
+.leaflet-popup-content {
+    line-height: 1.8;
+}
+
+#svgWarehouse{
+    color: black;
+    position: absolute;
+    left: 7px;
+    top: 2px;
+    color: white;   
+}
+
+.marker-cluster-small {
+   /* background-color: rgba(218, 94, 94, 0.6);*/
+}
+
+.marker-cluster-small div {
+ /*   background-color: brightness(50%);  */       
+}
+
+.marker-cluster-medium {
+    /*background-color: rgba(241, 211, 87, 0.6);*/
+}
+
+.marker-cluster-medium div {
+  /*  background-color: brightness(100%);*/
+}
+
+.marker-cluster-large {
+    /*background-color: rgba(253, 156, 115, 0.6);*/
+}
+    
+.marker-cluster-large div {
+  /*  background-color: brightness(150%); */
+}
+
+.leaflet-control-attribution {
+    display: none;
+}
